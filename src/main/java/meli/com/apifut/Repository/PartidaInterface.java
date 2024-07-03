@@ -1,4 +1,4 @@
 package meli.com.apifut.Repository;
 
-public interface timeRepository {
+public interface PartidaInterface {
 }

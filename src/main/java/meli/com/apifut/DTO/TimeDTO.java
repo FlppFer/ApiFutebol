@@ -1,11 +1,22 @@
 package meli.com.apifut.DTO;
 
+import meli.com.apifut.Model.Time;
+
 public class TimeDTO {
     private String nome;
     private String estado;
     private String criacao;
     private boolean status;
 
+    public TimeDTO(){
+
+    }
+    public TimeDTO(Time time){
+        this.nome = time.getNome();
+        this.estado = time.getEstado();
+        this.criacao = time.getCriacao();
+        this.status = time.getStatus();
+    }
     public String getNome() {
         return nome;
     }

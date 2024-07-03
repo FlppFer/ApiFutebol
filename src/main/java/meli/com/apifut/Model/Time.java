@@ -6,6 +6,14 @@ public class Time {
     private String criacao;
     private boolean status;
 
+
+    public Time(){
+
+    }
+    public boolean isAtivo() {
+        return status;
+    }
+
     public String getNome() {
         return nome;
     }
