@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -21,15 +20,23 @@ public class TimeController {
     private TimeService timeService;
 
     @PostMapping("/criar")
-    public ResponseEntity<Time> criarClube(@RequestBody TimeDTO timeDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(timeService.criarClube(timeDTO));
+    public ResponseEntity<?> criarClube(@RequestBody TimeDTO timeDTO) {
+
+        //FAZER EXCESSÃO
+        try {
+            timeService.criarClube(timeDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("O Clube '" + timeDTO.getNome() + "' foi criado com sucesso");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O Clube '" + timeDTO.getNome() + "' não foi criado");
+        }
+
     }
 
     @PutMapping("/editarTime/{id}")
     public ResponseEntity<?> editarClube(@PathVariable Long id, @RequestBody TimeDTO timeDTO) {
         try {
             timeService.editarClube(id, timeDTO);
-            return ResponseEntity.ok(timeDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("O Clube '" + timeDTO.getNome() + "' foi editado com sucesso");
         } catch (NoSuchElementException e) {
             String mensagemErro = "Time não encontrado com o id: " + id;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagemErro);
@@ -41,7 +48,7 @@ public class TimeController {
     public ResponseEntity<?> inativarClube(@PathVariable long id) {
         try {
             timeService.inativarClube(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Clube inativado com sucesso");
+            return ResponseEntity.noContent().build();
         }catch(NoSuchElementException e){
             String mensagemErro = "Time não encontrado com o id: " + id;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagemErro);

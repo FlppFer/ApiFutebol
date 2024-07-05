@@ -11,20 +11,13 @@ public class Time {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nomeDoTime;
+    private String nome;
     private String siglaEstado;
     private String dataCriacao;
     private boolean status;
 
     public Time(){
 
-    }
-    public Time(String nomeDoTime, String siglaEstado, String dataCriacao, boolean status, Long id) {
-        this.nomeDoTime = nomeDoTime;
-        this.siglaEstado = siglaEstado;
-        this.dataCriacao = dataCriacao;
-        this.status = status;
-        this.id = id;
     }
 
     public Long getId() {
@@ -35,12 +28,12 @@ public class Time {
         this.id = id;
     }
 
-    public String getNomeDoTime() {
-        return nomeDoTime;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeDoTime(String nomeDoTime) {
-        this.nomeDoTime = nomeDoTime;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getSiglaEstado() {

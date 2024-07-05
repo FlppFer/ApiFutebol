@@ -29,7 +29,7 @@ public class TimeService {
         if (optionalTime.isPresent()) {
             Time time = optionalTime.get();
 
-            time.setNomeDoTime(timeDTO.getNomeDoTime());
+            time.setNome(timeDTO.getNome());
             time.setSiglaEstado(timeDTO.getSiglaEstado());
             time.setDataCriacao(timeDTO.getDataCriacao());
             time.setStatus(timeDTO.getStatus());
@@ -41,11 +41,11 @@ public class TimeService {
 
     }
 
-    public void inativarClube(long id) {
+    public Time inativarClube(long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isPresent()) {
             buscarClubePorID(id).setStatus(false);
-            timeRepository.save(optionalTime.get());
+            return timeRepository.save(optionalTime.get());
         } else {
             throw new NoSuchElementException();
         }
@@ -60,20 +60,23 @@ public class TimeService {
     }
 
     public Page<Time> listarTimes(String nome, String estado, Boolean status, Pageable pageable) {
-        Page<Time> timesPage;
-        if (nome != null || estado != null || status != null) {
-            timesPage = timeRepository.findByNomeDoTimeContainingIgnoreCaseAndSiglaEstadoIgnoreCaseAndStatus(nome, estado, status, pageable);
-        } else {
-            timesPage = timeRepository.findAll(pageable);
+            if (nome == null && estado == null && status == null) {
+                return timeRepository.findAll(pageable);
+            } else {
+                return timeRepository.findByNomeContainingIgnoreCaseAndSiglaEstadoIgnoreCaseAndStatus(
+                        nome != null ? nome : "",
+                        estado != null ? estado : "",
+                        status,
+                        pageable
+                );
+            }
         }
-        return timesPage;
-    }
 
 
 
     private Time converterEntidade(TimeDTO timeDTO) {
         Time time = new Time();
-        time.setNomeDoTime(timeDTO.getNomeDoTime());
+        time.setNome(timeDTO.getNome());
         time.setSiglaEstado(timeDTO.getSiglaEstado());
         time.setDataCriacao(timeDTO.getDataCriacao());
         time.setStatus(timeDTO.getStatus());
@@ -82,7 +85,7 @@ public class TimeService {
 
     private TimeDTO converterDTO(Time time) {
         TimeDTO timeDTO = new TimeDTO();
-        timeDTO.setNomeDoTime(time.getNomeDoTime());
+        timeDTO.setNome(time.getNome());
         timeDTO.setSiglaEstado(time.getSiglaEstado());
         timeDTO.setDataCriacao(time.getDataCriacao());
         timeDTO.setStatus(time.getStatus());

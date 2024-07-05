@@ -3,7 +3,7 @@ package meli.com.apifut.DTO;
 import meli.com.apifut.Model.Time;
 
 public class TimeDTO {
-    private String nomeDoTime;
+    private String nome;
     private String siglaEstado;
     private String dataCriacao;
     private boolean status;
@@ -12,20 +12,13 @@ public class TimeDTO {
 
     }
 
-    public TimeDTO(Time time) {
-        this.nomeDoTime = time.getNomeDoTime();
-        this.siglaEstado = time.getSiglaEstado();
-        this.dataCriacao = time.getDataCriacao();
-        this.status = time.getStatus();
+
+    public String getNome() {
+        return nome;
     }
 
-
-    public String getNomeDoTime() {
-        return nomeDoTime;
-    }
-
-    public void setNomeDoTime(String nomeDoTime) {
-        this.nomeDoTime = nomeDoTime;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getSiglaEstado() {
