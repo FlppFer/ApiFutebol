@@ -21,13 +21,11 @@ public class TimeController {
 
     @PostMapping("/criar")
     public ResponseEntity<?> criarClube(@RequestBody TimeDTO timeDTO) {
-
-        //FAZER EXCESSÃO
         try {
             timeService.criarClube(timeDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("O Clube '" + timeDTO.getNome() + "' foi criado com sucesso");
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O Clube '" + timeDTO.getNome() + "' não foi criado");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O Clube não foi criado, verifique se todos os campos foram preenchidos e de forma correta");
         }
 
     }

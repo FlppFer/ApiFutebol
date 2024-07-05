@@ -6,7 +6,7 @@ public class TimeDTO {
     private String nome;
     private String siglaEstado;
     private String dataCriacao;
-    private boolean status;
+    private Boolean status;
 
     public TimeDTO() {
 
@@ -37,7 +37,7 @@ public class TimeDTO {
         this.dataCriacao = dataCriacao;
     }
 
-    public boolean getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 

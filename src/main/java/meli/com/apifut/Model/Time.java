@@ -14,7 +14,7 @@ public class Time {
     private String nome;
     private String siglaEstado;
     private String dataCriacao;
-    private boolean status;
+    private Boolean status;
 
     public Time(){
 
@@ -52,15 +52,11 @@ public class Time {
         this.dataCriacao = dataCriacao;
     }
 
-    public boolean getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
     public void setStatus(boolean status) {
         this.status = status;
-    }
-
-    public boolean isStatus() {
-        return status;
     }
 }

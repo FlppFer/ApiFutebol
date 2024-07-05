@@ -18,9 +18,13 @@ public class TimeService {
     @Autowired
     private TimeRepository timeRepository;
 
-    public Time criarClube(TimeDTO timeDTO) {
-        Time time = converterEntidade(timeDTO);
-        return timeRepository.save(time);
+    public void criarClube(TimeDTO timeDTO) {
+        if (timeDTO.getNome() == null && timeDTO.getSiglaEstado() == null && timeDTO.getDataCriacao() == null && timeDTO.getStatus() == null) {
+            Time time = converterEntidade(timeDTO);
+            timeRepository.save(time);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void editarClube(Long id, TimeDTO timeDTO) {
