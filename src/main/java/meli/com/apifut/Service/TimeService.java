@@ -4,11 +4,13 @@ import meli.com.apifut.DTO.TimeDTO;
 import meli.com.apifut.Model.Time;
 import meli.com.apifut.Repository.TimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 
 @Service
 public class TimeService {
@@ -16,67 +18,58 @@ public class TimeService {
     @Autowired
     private TimeRepository timeRepository;
 
-    public TimeDTO criarClube(TimeDTO timeDTO) {
-
+    public Time criarClube(TimeDTO timeDTO) {
         Time time = converterEntidade(timeDTO);
-
-
-        return converterDTO(time);
+        return timeRepository.save(time);
     }
 
-    public TimeDTO editarClube(TimeDTO timeDTO) {
-        timeDTO.setNomeDoTime(timeDTO.getNomeDoTime());
-        timeDTO.setSiglaEstado(timeDTO.getSiglaEstado());
-        timeDTO.setDataCriacao(timeDTO.getDataCriacao());
-        timeDTO.setStatus(timeDTO.getStatus());
-        return timeDTO;
-    }
+    public void editarClube(Long id, TimeDTO timeDTO) {
+        Optional<Time> optionalTime = timeRepository.findById(id);
 
-    public Time inativarClube(long id) {
-        buscarClubePorID(id).setStatus(false);
-        return buscarClubePorID(id);
-    }
+        if (optionalTime.isPresent()) {
+            Time time = optionalTime.get();
 
-    public Time buscarClubePorID(long id) {
-        return listaTimes.get(id);
-    }
+            time.setNomeDoTime(timeDTO.getNomeDoTime());
+            time.setSiglaEstado(timeDTO.getSiglaEstado());
+            time.setDataCriacao(timeDTO.getDataCriacao());
+            time.setStatus(timeDTO.getStatus());
 
-    public List<TimeDTO> listarTimes(String nome, String estado, Boolean status, int page, int size, String sortBy, String sortDirection) {
-        List<Time> timesFiltrados = listaTimes.values().stream()
-                .filter(time -> (nome == null || time.getNomeDoTime().toLowerCase().contains(nome.toLowerCase())))
-                .filter(time -> (estado == null || time.getSiglaEstado().equalsIgnoreCase(estado)))
-                .filter(time -> (status == null || time.isStatus() == status))
-                .sorted(getComparator(sortBy, sortDirection))
-                .collect(Collectors.toList());
-
-        int startIndex = page * size;
-        int endIndex = Math.min(startIndex + size, timesFiltrados.size());
-
-        List<Time> timesPaginados = timesFiltrados.subList(startIndex, endIndex);
-
-        return timesPaginados.stream()
-                .map(this::converterDTO)
-                .collect(Collectors.toList());
-    }
-
-    private Comparator<Time> getComparator(String sortBy, String sortDirection) {
-        Comparator<Time> comparator = Comparator.comparing(Time::getNomeDoTime); // Default sorting by nome
-
-        switch (sortBy) {
-            case "estado":
-                comparator = Comparator.comparing(Time::getSiglaEstado);
-                break;
-            case "status":
-                comparator = Comparator.comparing(Time::isStatus);
-                break;
+            timeRepository.save(time);
+        } else {
+            throw new NoSuchElementException();
         }
 
-        if ("desc".equalsIgnoreCase(sortDirection)) {
-            comparator = comparator.reversed();
-        }
-
-        return comparator;
     }
+
+    public void inativarClube(long id) {
+        Optional<Time> optionalTime = timeRepository.findById(id);
+        if (optionalTime.isPresent()) {
+            buscarClubePorID(id).setStatus(false);
+            timeRepository.save(optionalTime.get());
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    public Time buscarClubePorID(Long id) {
+        Optional<Time> optionalTime = timeRepository.findById(id);
+        if (optionalTime.isPresent()) {
+        return optionalTime.get();
+        }
+        throw new NoSuchElementException();
+    }
+
+    public Page<Time> listarTimes(String nome, String estado, Boolean status, Pageable pageable) {
+        Page<Time> timesPage;
+        if (nome != null || estado != null || status != null) {
+            timesPage = timeRepository.findByNomeDoTimeContainingIgnoreCaseAndSiglaEstadoIgnoreCaseAndStatus(nome, estado, status, pageable);
+        } else {
+            timesPage = timeRepository.findAll(pageable);
+        }
+        return timesPage;
+    }
+
+
 
     private Time converterEntidade(TimeDTO timeDTO) {
         Time time = new Time();
