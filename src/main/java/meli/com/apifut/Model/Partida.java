@@ -1,30 +1,37 @@
 package meli.com.apifut.Model;
+import jakarta.persistence.*;
 import meli.com.apifut.DTO.PartidaDTO;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+@Entity
 public class Partida {
-    private Time timeCasa;
-    private Time timeVisitante;
-    private String resultado;
-    private String estadio;
-    private LocalDateTime dataHora;
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private static final Map<Long, PartidaDTO> listaPartidas = new ConcurrentHashMap<>();
+    @ManyToOne
+    private Time timeCasa;
+    @ManyToOne
+    private Time timeVisitante;
+    @ManyToOne
+    private Estadio estadio;
+    private String resultado;
+    private LocalDateTime dataHora;
 
     public Partida() {
 
     }
 
-    public Partida(Time timeCasa, Time timeVisitante, String resultado, String estadio, LocalDateTime dataHora) {
+    public Partida(Time timeCasa, Time timeVisitante, String resultado, Estadio estadio, LocalDateTime dataHora, Long id) {
         this.timeCasa = timeCasa;
         this.timeVisitante = timeVisitante;
         this.resultado = resultado;
         this.estadio = estadio;
         this.dataHora = dataHora;
+        this.id = id;
     }
 
     public Time getTimeCasa() {
@@ -51,11 +58,11 @@ public class Partida {
         this.resultado = resultado;
     }
 
-    public String getEstadio() {
+    public Estadio getEstadio() {
         return estadio;
     }
 
-    public void setEstadio(String estadio) {
+    public void setEstadio(Estadio estadio) {
         this.estadio = estadio;
     }
 
@@ -65,5 +72,13 @@ public class Partida {
 
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

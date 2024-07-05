@@ -2,28 +2,24 @@ package meli.com.apifut.Service;
 
 import meli.com.apifut.DTO.EstadioDTO;
 import meli.com.apifut.Model.Estadio;
+import meli.com.apifut.Repository.EstadioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
 public class EstadioService {
 
-    static final Map<Long, Estadio> listaEstadios = new ConcurrentHashMap<>();
-    private static long IdAtualEstadio = 0;
+    @Autowired
+    private EstadioRepository estadioRepository;
 
     public EstadioDTO criarEstadio(EstadioDTO estadioDTO) {
         Estadio estadio = converterEntidade(estadioDTO);
-
-        long idEstadio = IdAtualEstadio;
-        listaEstadios.put(idEstadio, estadio);
-        IdAtualEstadio += 1;
-
-        return converterDTO(estadio);
+        Estadio novoEstadio = estadioRepository.save(estadio);
+        return converterDTO(novoEstadio);
     }
 
     public EstadioDTO editarNomeDOEstadio(EstadioDTO estadioDTO) {

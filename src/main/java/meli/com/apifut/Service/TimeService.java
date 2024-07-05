@@ -2,41 +2,32 @@ package meli.com.apifut.Service;
 
 import meli.com.apifut.DTO.TimeDTO;
 import meli.com.apifut.Model.Time;
+import meli.com.apifut.Repository.TimeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
 public class TimeService {
-    static final Map<Long, Time> listaTimes = new ConcurrentHashMap<>();
-    private static long IdAtualTime = 0;
 
-    public TimeService() {
-    }
-
-    public List<Time> getAllTimes() {
-        return new ArrayList<>(listaTimes.values());
-    }
+    @Autowired
+    private TimeRepository timeRepository;
 
     public TimeDTO criarClube(TimeDTO timeDTO) {
+
         Time time = converterEntidade(timeDTO);
 
-        long id = IdAtualTime;
-        listaTimes.put(id, time);
-        IdAtualTime += 1;
 
         return converterDTO(time);
     }
 
     public TimeDTO editarClube(TimeDTO timeDTO) {
-        timeDTO.setNome(timeDTO.getNome());
-        timeDTO.setEstado(timeDTO.getEstado());
-        timeDTO.setCriacao(timeDTO.getCriacao());
+        timeDTO.setNomeDoTime(timeDTO.getNomeDoTime());
+        timeDTO.setSiglaEstado(timeDTO.getSiglaEstado());
+        timeDTO.setDataCriacao(timeDTO.getDataCriacao());
         timeDTO.setStatus(timeDTO.getStatus());
         return timeDTO;
     }
@@ -52,9 +43,9 @@ public class TimeService {
 
     public List<TimeDTO> listarTimes(String nome, String estado, Boolean status, int page, int size, String sortBy, String sortDirection) {
         List<Time> timesFiltrados = listaTimes.values().stream()
-                .filter(time -> (nome == null || time.getNome().toLowerCase().contains(nome.toLowerCase())))
-                .filter(time -> (estado == null || time.getEstado().equalsIgnoreCase(estado)))
-                .filter(time -> (status == null || time.isAtivo() == status))
+                .filter(time -> (nome == null || time.getNomeDoTime().toLowerCase().contains(nome.toLowerCase())))
+                .filter(time -> (estado == null || time.getSiglaEstado().equalsIgnoreCase(estado)))
+                .filter(time -> (status == null || time.isStatus() == status))
                 .sorted(getComparator(sortBy, sortDirection))
                 .collect(Collectors.toList());
 
@@ -69,14 +60,14 @@ public class TimeService {
     }
 
     private Comparator<Time> getComparator(String sortBy, String sortDirection) {
-        Comparator<Time> comparator = Comparator.comparing(Time::getNome); // Default sorting by nome
+        Comparator<Time> comparator = Comparator.comparing(Time::getNomeDoTime); // Default sorting by nome
 
         switch (sortBy) {
             case "estado":
-                comparator = Comparator.comparing(Time::getEstado);
+                comparator = Comparator.comparing(Time::getSiglaEstado);
                 break;
             case "status":
-                comparator = Comparator.comparing(Time::isAtivo);
+                comparator = Comparator.comparing(Time::isStatus);
                 break;
         }
 
@@ -89,18 +80,18 @@ public class TimeService {
 
     private Time converterEntidade(TimeDTO timeDTO) {
         Time time = new Time();
-        time.setNome(timeDTO.getNome());
-        time.setEstado(timeDTO.getEstado());
-        time.setCriacao(timeDTO.getCriacao());
+        time.setNomeDoTime(timeDTO.getNomeDoTime());
+        time.setSiglaEstado(timeDTO.getSiglaEstado());
+        time.setDataCriacao(timeDTO.getDataCriacao());
         time.setStatus(timeDTO.getStatus());
         return time;
     }
 
     private TimeDTO converterDTO(Time time) {
         TimeDTO timeDTO = new TimeDTO();
-        timeDTO.setNome(time.getNome());
-        timeDTO.setEstado(time.getEstado());
-        timeDTO.setCriacao(time.getCriacao());
+        timeDTO.setNomeDoTime(time.getNomeDoTime());
+        timeDTO.setSiglaEstado(time.getSiglaEstado());
+        timeDTO.setDataCriacao(time.getDataCriacao());
         timeDTO.setStatus(time.getStatus());
         return timeDTO;
     }

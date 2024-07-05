@@ -3,42 +3,45 @@ package meli.com.apifut.DTO;
 import meli.com.apifut.Model.Time;
 
 public class TimeDTO {
-    private String nome;
-    private String estado;
-    private String criacao;
+    private String nomeDoTime;
+    private String siglaEstado;
+    private String dataCriacao;
     private boolean status;
 
-    public TimeDTO(){
+    public TimeDTO() {
 
     }
-    public TimeDTO(Time time){
-        this.nome = time.getNome();
-        this.estado = time.getEstado();
-        this.criacao = time.getCriacao();
+
+    public TimeDTO(Time time) {
+        this.nomeDoTime = time.getNomeDoTime();
+        this.siglaEstado = time.getSiglaEstado();
+        this.dataCriacao = time.getDataCriacao();
         this.status = time.getStatus();
     }
-    public String getNome() {
-        return nome;
+
+
+    public String getNomeDoTime() {
+        return nomeDoTime;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNomeDoTime(String nomeDoTime) {
+        this.nomeDoTime = nomeDoTime;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getSiglaEstado() {
+        return siglaEstado;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setSiglaEstado(String siglaEstado) {
+        this.siglaEstado = siglaEstado;
     }
 
-    public String getCriacao() {
-        return criacao;
+    public String getDataCriacao() {
+        return dataCriacao;
     }
 
-    public void setCriacao(String criacao) {
-        this.criacao = criacao;
+    public void setDataCriacao(String dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     public boolean getStatus() {

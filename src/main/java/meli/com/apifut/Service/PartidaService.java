@@ -6,13 +6,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class PartidaService {
 
-    private static final Map<Long, PartidaDTO> listaPartidas = new ConcurrentHashMap<>();
     private static long IdAtualPartida = 0;
 
     public PartidaDTO criarNovaPartida(PartidaDTO novaPartidaDTO) {

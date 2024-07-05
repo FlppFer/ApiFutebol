@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 public class PartidaDTO {
 
-    private Long id;
     private Time timeCasa;
     private Time timeVisitante;
     private String resultado;
@@ -17,14 +16,14 @@ public class PartidaDTO {
 
     }
 
-    public PartidaDTO(Long id, Time timeCasa, Time timeVisitante, String resultado, String estadio, LocalDateTime dataHora) {
-        this.id = id;
+    public PartidaDTO(Time timeCasa, Time timeVisitante, String resultado, String estadio, LocalDateTime dataHora) {
         this.timeCasa = timeCasa;
         this.timeVisitante = timeVisitante;
         this.resultado = resultado;
         this.estadio = estadio;
         this.dataHora = dataHora;
     }
+
 
     public Time getTimeCasa() {
         return timeCasa;
@@ -65,4 +64,6 @@ public class PartidaDTO {
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
+
+
 }
