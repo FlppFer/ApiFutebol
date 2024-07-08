@@ -19,7 +19,7 @@ public class TimeService {
     private TimeRepository timeRepository;
 
     public void criarClube(TimeDTO timeDTO) {
-        if (timeDTO.getNome() == null && timeDTO.getSiglaEstado() == null && timeDTO.getDataCriacao() == null && timeDTO.getStatus() == null) {
+        if (timeDTO.getNome() != null && timeDTO.getSiglaEstado() != null && timeDTO.getDataCriacao() != null && timeDTO.getStatus() != null) {
             Time time = converterEntidade(timeDTO);
             timeRepository.save(time);
         } else {
@@ -30,7 +30,7 @@ public class TimeService {
     public void editarClube(Long id, TimeDTO timeDTO) {
         Optional<Time> optionalTime = timeRepository.findById(id);
 
-        if (optionalTime.isPresent()) {
+        if (optionalTime.isPresent() && timeDTO.getNome() != null && timeDTO.getSiglaEstado() != null && timeDTO.getDataCriacao() != null && timeDTO.getStatus() != null){
             Time time = optionalTime.get();
 
             time.setNome(timeDTO.getNome());
@@ -45,11 +45,11 @@ public class TimeService {
 
     }
 
-    public Time inativarClube(long id) {
+    public void inativarClube(long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isPresent()) {
             buscarClubePorID(id).setStatus(false);
-            return timeRepository.save(optionalTime.get());
+            timeRepository.save(optionalTime.get());
         } else {
             throw new NoSuchElementException();
         }

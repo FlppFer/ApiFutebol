@@ -64,7 +64,7 @@ public class TimeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagemErro);
         }
     }
-
+//fazer excessão
     @GetMapping("/listarTimes")
     public ResponseEntity<Page<Time>> listarTimes(
             @RequestParam(required = false) String nome,
