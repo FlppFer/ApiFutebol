@@ -75,10 +75,7 @@ public class TimeController {
             @RequestParam(defaultValue = "nome") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<Time> times = timeService.listarTimes(
-                nome,
-                estado,
-                status,
+        Page<Time> times = timeService.listarTimes(nome, estado, status,
                 PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy)
         );
         return ResponseEntity.ok(times);

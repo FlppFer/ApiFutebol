@@ -1,8 +1,7 @@
 package meli.com.apifut.DTO;
 
-import meli.com.apifut.Model.Time;
-
 public class TimeDTO {
+    private long id;
     private String nome;
     private String siglaEstado;
     private String dataCriacao;
@@ -10,6 +9,12 @@ public class TimeDTO {
 
     public TimeDTO() {
 
+    }
+    public TimeDTO(String nome, String siglaEstado, String dataCriacao, Boolean status) {
+        this.nome = nome;
+        this.siglaEstado = siglaEstado;
+        this.dataCriacao = dataCriacao;
+        this.status = status;
     }
 
 
@@ -45,6 +50,13 @@ public class TimeDTO {
         this.status = status;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }
 
 

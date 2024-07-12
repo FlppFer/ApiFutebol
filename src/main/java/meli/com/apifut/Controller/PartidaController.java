@@ -65,23 +65,18 @@ public class PartidaController {
         }
     }
 
-    @GetMapping("/buscarPartidasPorParametro/")
-    public ResponseEntity<?> listarPartidas(
-            @RequestParam(required = false) Long partidaId,
+    @GetMapping("/listarPartidas/")
+    public ResponseEntity<Page<Partida>> listarPartidas(
             @RequestParam(required = false) Long timeId,
             @RequestParam(required = false) Long estadioId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "time") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection   ){
-
-            Page<Partida> partidas = partidaService.buscarPartidaOuPorTimeOuEstadio(
-                    partidaId,
-                    timeId,
-                    estadioId,
-                    PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy))
-            );
-            return ResponseEntity.ok(partidas);
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        Page<Partida> partidas = partidaService.listarPartidas(timeId, estadioId,
+                PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
+        return ResponseEntity.ok(partidas);
         }
     }
 

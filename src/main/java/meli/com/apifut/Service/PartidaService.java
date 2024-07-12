@@ -2,17 +2,14 @@ package meli.com.apifut.Service;
 
 import meli.com.apifut.Model.Partida;
 import meli.com.apifut.DTO.PartidaDTO;
-import meli.com.apifut.Model.Time;
 import meli.com.apifut.Repository.EstadioRepository;
 import meli.com.apifut.Repository.PartidaRepository;
 import meli.com.apifut.Repository.TimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -64,25 +61,29 @@ public class PartidaService {
     }
 
     public Partida buscarPartidaPorId(Long id) {
-        if (id != null && partidaRepository.existsById(id)){
+        if (id != null && partidaRepository.existsById(id)) {
             return partidaRepository.findById(id).get();
         } else {
             throw new NoSuchElementException();
         }
     }
 
-    public Page<Partida> buscarPartidaOuPorTimeOuEstadio(Long partidaId, Long timeId, Long estadioId, Pageable pageable) {
-        if (partidaId != null){
-            Partida partida = buscarPartidaPorId(partidaId);
-            return new PageImpl<>(List.of(partida));
-         } else if (timeId !=null){
-            return partidaRepository.findPartidaByTimeId(timeId, pageable);
-        }else(estadioId != null){
-            return partidaRepository.findPartidaByEstadioId(estadioId, pageable);
-        } else {
-            return new
-        }
+    public Page<Partida> listarPartidas(Long timeId, Long estadioId, Pageable pageable) {
+        if (timeId == null && estadioId == null) {
+            return partidaRepository.findAllPartidas(pageable);
 
+//        } else if (partidaId != null) {
+//            Partida partida = buscarPartidaPorId(partidaId);
+//            return new PageImpl<>(List.of(partida));
+//        } else if (timeId != null) {
+//            return partidaRepository.findPartidaByTimeId(timeId, pageable);
+//        }
+//        else if (estadioId != null) {
+//            return partidaRepository.findPartidaByEstadioId(estadioId, pageable);
+//        }
+//        return Page.empty();
+        }
+        return Page.empty();
     }
 
     private Partida converterEntidade(PartidaDTO partidaDTO) {

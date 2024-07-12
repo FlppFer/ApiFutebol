@@ -16,10 +16,10 @@ import java.util.Optional;
 public class TimeService {
 
     @Autowired
-    private static TimeRepository timeRepository;
+    private TimeRepository timeRepository;
 
     public void criarClube(TimeDTO timeDTO) {
-        if (timeDTO.getNome() != null && timeDTO.getSiglaEstado() != null && timeDTO.getDataCriacao() != null && timeDTO.getStatus() != null) {
+        if (timeDTO.getNome() != null && timeDTO.getSiglaEstado() != null && timeDTO.getDataCriacao() != null) {
             Time time = converterEntidade(timeDTO);
             timeRepository.save(time);
         } else {
@@ -55,7 +55,7 @@ public class TimeService {
         }
     }
 
-    public static Time buscarClubePorID(Long id) {
+    public Time buscarClubePorID(Long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isPresent()) {
         return optionalTime.get();
