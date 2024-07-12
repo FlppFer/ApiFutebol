@@ -1,22 +1,22 @@
 package meli.com.apifut.DTO;
 
 public class EstadioDTO {
-    private String nomeDoEstadio;
+    private String nome;
 
     public EstadioDTO(){
 
     }
 
-    public EstadioDTO(String nomeDoEstadio) {
-        this.nomeDoEstadio = nomeDoEstadio;
+    public EstadioDTO(String nome) {
+        this.nome = nome;
     }
 
-    public String getNomeDoEstadio() {
-        return nomeDoEstadio;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeDoEstadio(String nomeDoEstadio) {
-        this.nomeDoEstadio = nomeDoEstadio;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
 }

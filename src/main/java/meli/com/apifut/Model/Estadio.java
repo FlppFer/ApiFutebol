@@ -1,30 +1,34 @@
 package meli.com.apifut.Model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class Estadio {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nomeDoEstadio;
+
+    private String nome;
 
     public Estadio() {
 
     }
 
-    public Estadio(String nomeDoEstadio) {
-        this.nomeDoEstadio = nomeDoEstadio;
+    public Estadio(String nome) {
+        this.nome = nome;
     }
 
 
-    public String getNomeDoEstadio() {
-        return nomeDoEstadio;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeDoEstadio(String nomeDoEstadio) {
-        this.nomeDoEstadio = nomeDoEstadio;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
 

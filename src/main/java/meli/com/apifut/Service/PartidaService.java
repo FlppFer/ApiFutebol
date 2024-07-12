@@ -1,14 +1,18 @@
 package meli.com.apifut.Service;
 
-import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Model.Partida;
 import meli.com.apifut.DTO.PartidaDTO;
 import meli.com.apifut.Model.Time;
+import meli.com.apifut.Repository.EstadioRepository;
 import meli.com.apifut.Repository.PartidaRepository;
+import meli.com.apifut.Repository.TimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -17,10 +21,14 @@ public class PartidaService {
 
     @Autowired
     private PartidaRepository partidaRepository;
+    @Autowired
+    private TimeRepository timeRepository;
+    @Autowired
+    private EstadioRepository estadioRepository;
 
 
     public void criarNovaPartida(PartidaDTO partidaDTO) {
-        if (partidaDTO.getTimeCasa() == null || partidaDTO.getTimeVisitante() == null || partidaDTO.getResultado() == null || partidaDTO.getEstadio() == null || partidaDTO.getDataHora() == null) {
+        if (partidaDTO.getTimeCasa() != null || partidaDTO.getTimeVisitante() != null || partidaDTO.getResultado() != null || partidaDTO.getEstadio() != null || partidaDTO.getDataHora() != null) {
             Partida partida = converterEntidade(partidaDTO);
             partidaRepository.save(partida);
         } else {
@@ -55,21 +63,26 @@ public class PartidaService {
         }
     }
 
-    public Partida buscarPartidaPorId(long id) {
-        Optional<Partida> optionalPartida = partidaRepository.findById(id);
-        if (optionalPartida.isPresent()) {
-            return optionalPartida.get();
+    public Partida buscarPartidaPorId(Long id) {
+        if (id != null && partidaRepository.existsById(id)){
+            return partidaRepository.findById(id).get();
         } else {
             throw new NoSuchElementException();
         }
     }
 
-    public Page<Partida> listarPartidas(Time time, Estadio estadio, Pageable pageable) {
-        if (time == null && estadio == null) {
-            return partidaRepository.findAll(pageable);
+    public Page<Partida> buscarPartidaOuPorTimeOuEstadio(Long partidaId, Long timeId, Long estadioId, Pageable pageable) {
+        if (partidaId != null){
+            Partida partida = buscarPartidaPorId(partidaId);
+            return new PageImpl<>(List.of(partida));
+         } else if (timeId !=null){
+            return partidaRepository.findPartidaByTimeId(timeId, pageable);
+        }else(estadioId != null){
+            return partidaRepository.findPartidaByEstadioId(estadioId, pageable);
         } else {
-            return partidaRepository.findByTimeCasaOrTimeVisitanteOrEstadio(time, time, estadio, pageable);
+            return new
         }
+
     }
 
     private Partida converterEntidade(PartidaDTO partidaDTO) {

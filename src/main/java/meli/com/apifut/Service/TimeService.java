@@ -16,7 +16,7 @@ import java.util.Optional;
 public class TimeService {
 
     @Autowired
-    private TimeRepository timeRepository;
+    private static TimeRepository timeRepository;
 
     public void criarClube(TimeDTO timeDTO) {
         if (timeDTO.getNome() != null && timeDTO.getSiglaEstado() != null && timeDTO.getDataCriacao() != null && timeDTO.getStatus() != null) {
@@ -55,7 +55,7 @@ public class TimeService {
         }
     }
 
-    public Time buscarClubePorID(Long id) {
+    public static Time buscarClubePorID(Long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isPresent()) {
         return optionalTime.get();

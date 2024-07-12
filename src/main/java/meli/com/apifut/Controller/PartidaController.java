@@ -1,9 +1,7 @@
 package meli.com.apifut.Controller;
 
 import meli.com.apifut.DTO.PartidaDTO;
-import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Model.Partida;
-import meli.com.apifut.Model.Time;
 import meli.com.apifut.Service.PartidaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,9 +26,9 @@ public class PartidaController {
     public ResponseEntity<?> criarNovaPartida(@RequestBody PartidaDTO partidaDTO) {
         try {
             partidaService.criarNovaPartida(partidaDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("A partida entre " + partidaDTO.getTimeCasa() + "e o time " + partidaDTO.getTimeVisitante() + "foi registrada com sucesso!");
+            return ResponseEntity.status(HttpStatus.CREATED).body("A partida entre " + partidaDTO.getTimeCasa().getNome() + "e o time " + partidaDTO.getTimeVisitante().getNome() + "foi registrada com sucesso!");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("A partida não foi registrada, verifique se todos os campos foram preenchidos corretamente!");
+            return ResponseEntity.badRequest().body("A partida não foi registrada, verifique se todos os campos foram preenchidos corretamente!" + e);
         }
 
     }
@@ -50,14 +48,14 @@ public class PartidaController {
     public ResponseEntity<?> editarPartida(@PathVariable long id, @RequestBody PartidaDTO partidaDTO) {
         try {
             partidaService.editarPartida(id, partidaDTO);
-            return ResponseEntity.ok(partidaDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("A partida entre " + partidaDTO.getTimeCasa() + " e "+ partidaDTO.getTimeVisitante() + " foi editada com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("A partida não foi encontrada ou um dos campos não foi preenchido corretamente!");
         }
 
     }
 
-    @GetMapping("/{buscarPartidaPorId/{id}")
+    @GetMapping("/buscarPartidaPorId/{id}")
     public ResponseEntity<?> buscarPartidaPorId(@PathVariable long id) {
         try {
             Partida partida = partidaService.buscarPartidaPorId(id);
@@ -67,22 +65,26 @@ public class PartidaController {
         }
     }
 
-//fazer excessão
-    @GetMapping("/listarPartidas")
-    public ResponseEntity<Page<Partida>> listarPartidas(
-            @RequestParam(required = false) Time time,
-            @RequestParam(required = false) Estadio estadio,
+    @GetMapping("/buscarPartidasPorParametro/")
+    public ResponseEntity<?> listarPartidas(
+            @RequestParam(required = false) Long partidaId,
+            @RequestParam(required = false) Long timeId,
+            @RequestParam(required = false) Long estadioId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "nome") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection) {
-        Page<Partida> partidas = partidaService.listarPartidas(
-                time,
-                estadio,
-                PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy)
-        );
-        return ResponseEntity.ok(partidas);}
-}
+            @RequestParam(defaultValue = "time") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection   ){
+
+            Page<Partida> partidas = partidaService.buscarPartidaOuPorTimeOuEstadio(
+                    partidaId,
+                    timeId,
+                    estadioId,
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy))
+            );
+            return ResponseEntity.ok(partidas);
+        }
+    }
+
 
 
 

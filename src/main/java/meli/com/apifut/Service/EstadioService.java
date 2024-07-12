@@ -4,11 +4,12 @@ import meli.com.apifut.DTO.EstadioDTO;
 import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Repository.EstadioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class EstadioService {
@@ -16,58 +17,50 @@ public class EstadioService {
     @Autowired
     private EstadioRepository estadioRepository;
 
-    public EstadioDTO criarEstadio(EstadioDTO estadioDTO) {
-        Estadio estadio = converterEntidade(estadioDTO);
-        Estadio novoEstadio = estadioRepository.save(estadio);
-        return converterDTO(novoEstadio);
+    public void criarEstadio(EstadioDTO estadioDTO) {
+        if (estadioDTO.getNome()!=null){
+            Estadio estadio = converterEntidade(estadioDTO);
+            estadioRepository.save(estadio);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public EstadioDTO editarNomeDOEstadio(EstadioDTO estadioDTO) {
-        estadioDTO.setNomeDoEstadio(estadioDTO.getNomeDoEstadio());
-        return estadioDTO;
+    public void editarEstadio(long id, EstadioDTO estadioDTO) {
+        Optional<Estadio> optionalEstadio = estadioRepository.findById(id);
+        if (optionalEstadio.isPresent()) {
+            Estadio estadio = optionalEstadio.get();
+            estadio.setNome(estadioDTO.getNome());
+            estadioRepository.save(estadio);
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     public Estadio buscarEstadioPorID(long idEstadio) {
-
-    }
-
-    public List<EstadioDTO> listarEstadios(int page, int size, String sortBy, String sortDirection) {
-        Comparator<Estadio> comparator = getComparator(sortBy, sortDirection);
-
-        List<Estadio> estadiosOrdenados = listaEstadios.values().stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
-
-        int startIndex = page * size;
-        int endIndex = Math.min(startIndex + size, estadiosOrdenados.size());
-
-        List<Estadio> estadiosPaginados = estadiosOrdenados.subList(startIndex, endIndex);
-
-        return estadiosPaginados.stream()
-                .map(this::converterDTO)
-                .collect(Collectors.toList());
-    }
-
-    private Comparator<Estadio> getComparator(String sortBy, String sortDirection) {
-        Comparator<Estadio> comparator = Comparator.comparing(Estadio::getNomeDoEstadio);
-
-        if ("desc".equalsIgnoreCase(sortDirection)) {
-            comparator = comparator.reversed();
+        Optional<Estadio> optionalEstadio = estadioRepository.findById(idEstadio);
+        if (optionalEstadio.isPresent()) {
+            return optionalEstadio.get();
+        } else {
+            throw new NoSuchElementException();
         }
-
-        return comparator;
     }
+
+    public Page<Estadio> listarEstadios(Pageable pageable) {
+        return estadioRepository.findAll(pageable);
+    }
+
 
     private Estadio converterEntidade(EstadioDTO estadioDTO) {
         Estadio estadio = new Estadio();
-        estadio.setNomeDoEstadio(estadioDTO.getNomeDoEstadio());
+        estadio.setNome(estadioDTO.getNome());
 
         return estadio;
     }
 
     private EstadioDTO converterDTO(Estadio estadio) {
         EstadioDTO estadioDTO = new EstadioDTO();
-        estadioDTO.setNomeDoEstadio(estadio.getNomeDoEstadio());
+        estadioDTO.setNome(estadio.getNome());
 
         return estadioDTO;
     }

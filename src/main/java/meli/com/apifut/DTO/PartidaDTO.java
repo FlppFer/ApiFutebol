@@ -1,16 +1,22 @@
 package meli.com.apifut.DTO;
 
 
+import jakarta.persistence.ManyToOne;
 import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Model.Time;
 import java.time.LocalDateTime;
 
 public class PartidaDTO {
 
+    private long id;
+
+    @ManyToOne
     private Time timeCasa;
+    @ManyToOne
     private Time timeVisitante;
-    private String resultado;
+    @ManyToOne
     private Estadio estadio;
+    private String resultado;
     private LocalDateTime dataHora;
 
     public PartidaDTO() {
@@ -66,5 +72,11 @@ public class PartidaDTO {
         this.dataHora = dataHora;
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
