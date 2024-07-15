@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
-
 @RestController
 @RequestMapping("/api/times")
 public class TimeController {
@@ -43,25 +41,26 @@ public class TimeController {
     }
 
     @GetMapping("/buscarTimePorId/{id}")
-    public ResponseEntity<?> buscarClube(@PathVariable long id) {
-            Time time = timeService.buscarClubePorID(id);
-            return ResponseEntity.ok(time);
+    public ResponseEntity<TimeDTO> buscarClube(@PathVariable long id) {
+            TimeDTO timeBusca = timeService.buscarClubePorID(id);
+            return ResponseEntity.ok(timeBusca);
     }
 
-//    @GetMapping("/listarTimes")
-//    public ResponseEntity<Page<Time>> listarTimes(
-//            @RequestParam(required = false) String nome,
-//            @RequestParam(required = false) String estado,
-//            @RequestParam(required = false) Boolean status,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size,
-//            @RequestParam(defaultValue = "nome") String sortBy,
-//            @RequestParam(defaultValue = "asc") String sortDirection
-//    ) {
-//        Page<Time> times = timeService.listarTimes(nome, estado, status,
-//                PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
-//        return ResponseEntity.ok(times);
-//    }
+    @GetMapping("/listarTimes")
+    public ResponseEntity<Page<TimeDTO>> listarTimes(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nome") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ) {
+        Page<TimeDTO> times = timeService.listarTimes(nome, estado, status,
+                PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
+
+        return ResponseEntity.ok(times);
+    }
 }
 
 

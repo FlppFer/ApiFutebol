@@ -12,14 +12,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
 @Service
 public class TimeService {
 
-    public List<String> estadosBrasileiros = new ArrayList<>();{
+    public List<String> estadosBrasileiros = new ArrayList<>();
+
+    {
         estadosBrasileiros.add("AC"); // Acre
         estadosBrasileiros.add("AL"); // Alagoas
         estadosBrasileiros.add("AP"); // Amapá
@@ -55,13 +56,13 @@ public class TimeService {
     public void criarClube(TimeDTO timeDTO) {
         if (timeDTO.getNome() == null || timeDTO.getSiglaEstado() == null || timeDTO.getDataCriacao() == null) {
             throw new CamposObrigatoriosException();
-        } else if(timeDTO.getNome().length() < 2) {
+        } else if (timeDTO.getNome().length() < 2) {
             throw new NomeTimeInvalidoException();
-        } else if(!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
-             throw new SiglaInvalidaException();
-        }else if (timeDTO.getDataCriacao().isAfter(LocalDate.now())) {
+        } else if (!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
+            throw new SiglaInvalidaException();
+        } else if (timeDTO.getDataCriacao().isAfter(LocalDate.now())) {
             throw new DataNoFuturoException();
-        } else if(timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null){
+        } else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
             throw new TimeDuplicadoException();
         } else {
             Time time = converterEntidade(timeDTO);
@@ -72,52 +73,63 @@ public class TimeService {
 
     public void editarClube(Long id, TimeDTO timeDTO) {
         Optional<Time> optionalTime = timeRepository.findById(id);
-        if (optionalTime.isEmpty()){
+        if (optionalTime.isEmpty()) {
             throw new TimeNaoEncontradoException();
-        }else if(timeDTO.getNome().length() < 2) {
+        } else if (timeDTO.getNome().length() < 2) {
             throw new NomeTimeInvalidoException();
-        } else if(!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
+        } else if (!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
             throw new SiglaInvalidaException();
-        }else if (timeDTO.getDataCriacao().isAfter(timeRepository.findPrimeiraPartida(id))){
+        } else if (timeDTO.getDataCriacao().isAfter(timeRepository.findPrimeiraPartida(id))) {
             throw new DataAposPartidaException();
-        } else if(timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
+        } else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
             throw new TimeDuplicadoException();
         }
     }
 
     public void inativarClube(long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
-        if (optionalTime.isEmpty()){
+        if (optionalTime.isEmpty()) {
             throw new TimeNaoEncontradoException();
         }
-            Time time = optionalTime.get();
-            time.setStatus(false);
-            timeRepository.save(time);
+        Time time = optionalTime.get();
+        time.setStatus(false);
+        timeRepository.save(time);
 
     }
 
-    public Time buscarClubePorID(Long id) {
+    public TimeDTO buscarClubePorID(Long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isEmpty()) {
             throw new TimeNaoEncontradoException();
         }
-        return optionalTime.get();
+        return converterParaDTO(optionalTime.get());
     }
 
-    public Page<Time> listarTimes(String nome, String estado, Boolean status, Pageable pageable) {
-            if (nome == null && estado == null && status == null) {
-                return timeRepository.findAll(pageable);
-            } else {
-                return timeRepository.findAllByNomeContainingAndSiglaEstadoContainingAndStatus(
-                        nome != null ? nome : "",
-                        estado != null ? estado : "",
-                        status,
-                        pageable
-                );
-            }
+    public Page<TimeDTO> listarTimes(String nome, String estado, Boolean status, Pageable pageable) {
+       Page<Time> timesFiltrados;
+        if (nome == null && estado == null && status == null) {
+            timesFiltrados = timeRepository.findAll(pageable);
+        } else {
+            timesFiltrados = timeRepository.findAllByNomeContainingAndSiglaEstadoContainingAndStatus(
+                    nome != null ? nome : "",
+                    estado != null ? estado : "",
+                    status,
+                    pageable
+            );
+
         }
+        return timesFiltrados.map(this::converterParaDTO);
+    }
 
-
+    public TimeDTO converterParaDTO(Time time) {
+        TimeDTO timeDTO = new TimeDTO();
+        timeDTO.setStatus(time.getStatus());
+        timeDTO.setNome(time.getNome());
+        timeDTO.setSiglaEstado(time.getSiglaEstado());
+        timeDTO.setDataCriacao(time.getDataCriacao());
+        timeDTO.setStatus(time.getStatus());
+        return timeDTO;
+    }
 
     private Time converterEntidade(TimeDTO timeDTO) {
         Time time = new Time();
@@ -126,15 +138,6 @@ public class TimeService {
         time.setDataCriacao(timeDTO.getDataCriacao());
         time.setStatus(timeDTO.getStatus());
         return time;
-    }
-
-    private TimeDTO converterDTO(Time time) {
-        TimeDTO timeDTO = new TimeDTO();
-        timeDTO.setNome(time.getNome());
-        timeDTO.setSiglaEstado(time.getSiglaEstado());
-        timeDTO.setDataCriacao(time.getDataCriacao());
-        timeDTO.setStatus(time.getStatus());
-        return timeDTO;
     }
 
 
