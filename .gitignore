@@ -34,3 +34,6 @@ build/
 
 # Ignore application properties file
 src/main/resources/application.properties
+
+#Ignore DB credentials
+src/main/java/meli/com/apifut/connections/MySQLConnection.java
