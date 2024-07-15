@@ -1,10 +1,10 @@
 package meli.com.apifut.Exceptions;
 
-public class nomeTimeInvalido extends RuntimeException{
-    public nomeTimeInvalido() {
+public class NomeTimeInvalidoException extends RuntimeException{
+    public NomeTimeInvalidoException() {
         super("Nomes com menos que 2 letras são inválidos!");
     }
-    public nomeTimeInvalido(String message) {
+    public NomeTimeInvalidoException(String message) {
         super(message);
     }
 }

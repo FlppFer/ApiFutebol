@@ -1,12 +1,13 @@
 package meli.com.apifut.Model;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
+@Table(name = "partida")
 public class Partida {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -16,35 +17,27 @@ public class Partida {
     @ManyToOne
     private Estadio estadio;
     private String resultado;
-    private LocalDateTime dataHora;
+    private LocalDate dataPartida;
 
     public Partida() {
 
     }
 
-    public Partida(Time timeCasa, Time timeVisitante, String resultado, Estadio estadio, LocalDateTime dataHora, Long id) {
-        this.timeCasa = timeCasa;
-        this.timeVisitante = timeVisitante;
-        this.resultado = resultado;
-        this.estadio = estadio;
-        this.dataHora = dataHora;
+    public Partida(Long id, Time timeCasa, Time timeVisitante, Estadio estadio, String resultado, LocalDate dataPartida) {
         this.id = id;
-    }
-
-    public Time getTimeCasa() {
-        return timeCasa;
-    }
-
-    public void setTimeCasa(Time timeCasa) {
         this.timeCasa = timeCasa;
-    }
-
-    public Time getTimeVisitante() {
-        return timeVisitante;
-    }
-
-    public void setTimeVisitante(Time timeVisitante) {
         this.timeVisitante = timeVisitante;
+        this.estadio = estadio;
+        this.resultado = resultado;
+        this.dataPartida = dataPartida;
+    }
+
+    public LocalDate getDataPartida() {
+        return dataPartida;
+    }
+
+    public void setDataPartida(LocalDate dataPartida) {
+        this.dataPartida = dataPartida;
     }
 
     public String getResultado() {
@@ -63,19 +56,27 @@ public class Partida {
         this.estadio = estadio;
     }
 
-    public LocalDateTime getDataHora() {
-        return dataHora;
+    public Time getTimeVisitante() {
+        return timeVisitante;
     }
 
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
+    public void setTimeVisitante(Time timeVisitante) {
+        this.timeVisitante = timeVisitante;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Time getTimeCasa() {
+        return timeCasa;
+    }
+
+    public void setTimeCasa(Time timeCasa) {
+        this.timeCasa = timeCasa;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

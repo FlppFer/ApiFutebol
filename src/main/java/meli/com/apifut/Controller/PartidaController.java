@@ -14,13 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/partidas")
 public class PartidaController {
-
-    private final PartidaService partidaService;
-
     @Autowired
-    public PartidaController(PartidaService partidaService) {
-        this.partidaService = partidaService;
-    }
+    PartidaService partidaService;
 
     @PostMapping("/criarPartida")
     public ResponseEntity<?> criarNovaPartida(@RequestBody PartidaDTO partidaDTO) {
@@ -66,15 +61,15 @@ public class PartidaController {
     }
 
     @GetMapping("/listarPartidas/")
-    public ResponseEntity<Page<Partida>> listarPartidas(
+    public ResponseEntity<Page<Partida>> listarTodasPartidas(
             @RequestParam(required = false) Long timeId,
             @RequestParam(required = false) Long estadioId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "time") String sortBy,
+            @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection
     ){
-        Page<Partida> partidas = partidaService.listarPartidas(timeId, estadioId,
+        Page<Partida> partidas = partidaService.listarTodasPartidas(timeId, estadioId,
                 PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
         return ResponseEntity.ok(partidas);
         }

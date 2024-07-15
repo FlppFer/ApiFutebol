@@ -1,10 +1,10 @@
 package meli.com.apifut.Exceptions;
 
-public class DataInvalidaException extends RuntimeException{
-    public DataInvalidaException() {
+public class DataNoFuturoException extends RuntimeException{
+    public DataNoFuturoException() {
         super("A data é inválida!");
     }
-    public DataInvalidaException(String message) {
+    public DataNoFuturoException(String message) {
         super(message);
     }
 }

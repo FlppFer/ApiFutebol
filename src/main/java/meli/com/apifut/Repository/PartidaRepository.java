@@ -12,12 +12,12 @@ import java.util.List;
 
 @Repository
 public interface PartidaRepository extends JpaRepository<Partida, Long> {
-    @Query("SELECT p FROM Partida p WHERE p.timeCasa.id = :timeId OR p.timeVisitante.id = :timeId")
+    @Query(nativeQuery = true, value = "SELECT * FROM partida WHERE time_casa_id = :timeId OR time_visitante_id = :timeId")
     Page<Partida> findPartidaByTimeId(@Param("timeId") Long timeId, Pageable pageable);
     @Query ("SELECT p FROM Partida p WHERE p.estadio.id = :estadioId")
     Page<Partida> findPartidaByEstadioId(@Param("estadioId")Long estadioId, Pageable pageable);
-    @Query ("SELECT p FROM Partida p")
-    Page<Partida> findAllPartidas(Pageable pageable);
+//    @Query (nativeQuery = true, value = "SELECT * FROM partida")
+//    Page<Partida> findAllPartidas(Pageable pageable);
 
 }
 

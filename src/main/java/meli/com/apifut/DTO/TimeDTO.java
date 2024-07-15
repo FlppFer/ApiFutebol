@@ -1,16 +1,18 @@
 package meli.com.apifut.DTO;
 
+import java.time.LocalDate;
+
 public class TimeDTO {
     private long id;
     private String nome;
     private String siglaEstado;
-    private String dataCriacao;
+    private LocalDate dataCriacao;
     private Boolean status;
 
     public TimeDTO() {
 
     }
-    public TimeDTO(String nome, String siglaEstado, String dataCriacao, Boolean status) {
+    public TimeDTO(String nome, String siglaEstado, LocalDate dataCriacao, Boolean status) {
         this.nome = nome;
         this.siglaEstado = siglaEstado;
         this.dataCriacao = dataCriacao;
@@ -34,11 +36,11 @@ public class TimeDTO {
         this.siglaEstado = siglaEstado;
     }
 
-    public String getDataCriacao() {
+    public LocalDate getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(String dataCriacao) {
+    public void setDataCriacao(LocalDate dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 

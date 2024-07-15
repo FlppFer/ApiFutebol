@@ -1,11 +1,13 @@
 package meli.com.apifut.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "time")
 public class Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +15,7 @@ public class Time {
 
     private String nome;
     private String siglaEstado;
-    private String dataCriacao;
+    private LocalDate dataCriacao;
     private Boolean status;
 
     public Time(){
@@ -44,11 +46,11 @@ public class Time {
         this.siglaEstado = siglaEstado;
     }
 
-    public String getDataCriacao() {
+    public LocalDate getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(String dataCriacao) {
+    public void setDataCriacao(LocalDate dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
@@ -59,4 +61,5 @@ public class Time {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
 }

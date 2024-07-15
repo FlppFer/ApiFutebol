@@ -4,7 +4,8 @@ package meli.com.apifut.DTO;
 import jakarta.persistence.ManyToOne;
 import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Model.Time;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 public class PartidaDTO {
 
@@ -17,20 +18,28 @@ public class PartidaDTO {
     @ManyToOne
     private Estadio estadio;
     private String resultado;
-    private LocalDateTime dataHora;
+    private LocalDate dataPartida;
 
     public PartidaDTO() {
 
     }
 
-    public PartidaDTO(Time timeCasa, Time timeVisitante, String resultado, Estadio estadio, LocalDateTime dataHora) {
+    public PartidaDTO(long id, Time timeCasa, Time timeVisitante, Estadio estadio, String resultado, LocalDate dataPartida) {
+        this.id = id;
         this.timeCasa = timeCasa;
         this.timeVisitante = timeVisitante;
-        this.resultado = resultado;
         this.estadio = estadio;
-        this.dataHora = dataHora;
+        this.resultado = resultado;
+        this.dataPartida = dataPartida;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public Time getTimeCasa() {
         return timeCasa;
@@ -48,14 +57,6 @@ public class PartidaDTO {
         this.timeVisitante = timeVisitante;
     }
 
-    public String getResultado() {
-        return resultado;
-    }
-
-    public void setResultado(String resultado) {
-        this.resultado = resultado;
-    }
-
     public Estadio getEstadio() {
         return estadio;
     }
@@ -64,19 +65,19 @@ public class PartidaDTO {
         this.estadio = estadio;
     }
 
-    public LocalDateTime getDataHora() {
-        return dataHora;
+    public String getResultado() {
+        return resultado;
     }
 
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
+    public void setResultado(String resultado) {
+        this.resultado = resultado;
     }
 
-    public Long getId() {
-        return id;
+    public LocalDate getDataPartida() {
+        return dataPartida;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDataPartida(LocalDate dataPartida) {
+        this.dataPartida = dataPartida;
     }
 }

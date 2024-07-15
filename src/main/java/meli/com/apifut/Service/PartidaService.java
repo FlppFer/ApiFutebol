@@ -25,7 +25,7 @@ public class PartidaService {
 
 
     public void criarNovaPartida(PartidaDTO partidaDTO) {
-        if (partidaDTO.getTimeCasa() != null || partidaDTO.getTimeVisitante() != null || partidaDTO.getResultado() != null || partidaDTO.getEstadio() != null || partidaDTO.getDataHora() != null) {
+        if (partidaDTO.getTimeCasa() != null || partidaDTO.getTimeVisitante() != null || partidaDTO.getResultado() != null || partidaDTO.getEstadio() != null || partidaDTO.getDataPartida() != null) {
             Partida partida = converterEntidade(partidaDTO);
             partidaRepository.save(partida);
         } else {
@@ -36,14 +36,14 @@ public class PartidaService {
     public void editarPartida(long id, PartidaDTO PartidaDTO) {
         Optional<Partida> optionalPartida = partidaRepository.findById(id);
 
-        if (optionalPartida.isPresent() && PartidaDTO.getTimeCasa() != null && PartidaDTO.getTimeVisitante() != null && PartidaDTO.getResultado() != null && PartidaDTO.getEstadio() != null && PartidaDTO.getDataHora() != null) {
+        if (optionalPartida.isPresent() && PartidaDTO.getTimeCasa() != null && PartidaDTO.getTimeVisitante() != null && PartidaDTO.getResultado() != null && PartidaDTO.getEstadio() != null && PartidaDTO.getDataPartida() != null) {
             Partida partida = optionalPartida.get();
 
             partida.setTimeCasa(PartidaDTO.getTimeCasa());
             partida.setTimeVisitante(PartidaDTO.getTimeVisitante());
             partida.setResultado(PartidaDTO.getResultado());
             partida.setEstadio(PartidaDTO.getEstadio());
-            partida.setDataHora(PartidaDTO.getDataHora());
+            partida.setDataPartida(PartidaDTO.getDataPartida());
 
             partidaRepository.save(partida);
         } else {
@@ -68,22 +68,16 @@ public class PartidaService {
         }
     }
 
-    public Page<Partida> listarPartidas(Long timeId, Long estadioId, Pageable pageable) {
-        if (timeId == null && estadioId == null) {
-            return partidaRepository.findAllPartidas(pageable);
-
-//        } else if (partidaId != null) {
-//            Partida partida = buscarPartidaPorId(partidaId);
-//            return new PageImpl<>(List.of(partida));
-//        } else if (timeId != null) {
-//            return partidaRepository.findPartidaByTimeId(timeId, pageable);
-//        }
-//        else if (estadioId != null) {
-//            return partidaRepository.findPartidaByEstadioId(estadioId, pageable);
-//        }
-//        return Page.empty();
+    public Page<Partida> listarTodasPartidas(Long timeId, Long estadioId, Pageable pageable) {
+        if(timeId == null && estadioId == null) {
+            return partidaRepository.findAll(pageable);
+        } else if (timeId != null && timeRepository.existsById(timeId)) {
+            return partidaRepository.findPartidaByTimeId(timeId, pageable);
+        } else if (estadioId != null && estadioRepository.existsById(estadioId)) {
+            return partidaRepository.findPartidaByEstadioId(estadioId, pageable);
+        } else {
+            return Page.empty();
         }
-        return Page.empty();
     }
 
     private Partida converterEntidade(PartidaDTO partidaDTO) {
@@ -93,7 +87,7 @@ public class PartidaService {
         partida.setTimeVisitante(partidaDTO.getTimeVisitante());
         partida.setResultado(partidaDTO.getResultado());
         partida.setEstadio(partidaDTO.getEstadio());
-        partida.setDataHora(partidaDTO.getDataHora());
+        partida.setDataPartida(partidaDTO.getDataPartida());
 
         return partida;
     }
@@ -105,7 +99,7 @@ public class PartidaService {
         partidaDTO.setTimeVisitante(partida.getTimeVisitante());
         partidaDTO.setResultado(partida.getResultado());
         partidaDTO.setEstadio(partida.getEstadio());
-        partidaDTO.setDataHora(partida.getDataHora());
+        partidaDTO.setDataPartida(partida.getDataPartida());
 
         return partidaDTO;
     }
