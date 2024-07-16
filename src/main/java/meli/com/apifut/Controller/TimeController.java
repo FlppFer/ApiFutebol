@@ -1,7 +1,6 @@
 package meli.com.apifut.Controller;
 
 import meli.com.apifut.DTO.TimeDTO;
-import meli.com.apifut.Model.Time;
 import meli.com.apifut.Service.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/times")
-public class TimeController {
+public class  TimeController {
 
     @Autowired
     private TimeService timeService;
@@ -25,23 +24,23 @@ public class TimeController {
     }
 
 
-    @PutMapping("/editarTime/{id}")
-    public ResponseEntity<?> editarClube(@PathVariable Long id, @RequestBody TimeDTO timeDTO) {
+    @PutMapping("/editarTime")
+    public ResponseEntity<?> editarClube(@RequestParam Long id, @RequestBody TimeDTO timeDTO) {
             timeService.editarClube(id, timeDTO);
             return ResponseEntity.status(HttpStatus.OK).body("O Clube '" + timeDTO.getNome() + "' foi editado com sucesso");
 
     }
 
 
-    @DeleteMapping("/inativarTime/{id}")
-    public ResponseEntity<?> inativarClube(@PathVariable long id) {
+    @DeleteMapping("/inativarTime")
+    public ResponseEntity<?> inativarClube(@RequestParam long id) {
         timeService.inativarClube(id);
         return ResponseEntity.noContent().build();
 
     }
 
-    @GetMapping("/buscarTimePorId/{id}")
-    public ResponseEntity<TimeDTO> buscarClube(@PathVariable long id) {
+    @GetMapping("/buscarTimePorId")
+    public ResponseEntity<TimeDTO> buscarClube(@RequestParam long id) {
             TimeDTO timeBusca = timeService.buscarClubePorID(id);
             return ResponseEntity.ok(timeBusca);
     }

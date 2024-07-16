@@ -1,15 +1,13 @@
 package meli.com.apifut.DTO;
 
-
+import java.time.LocalDateTime;
 import jakarta.persistence.ManyToOne;
 import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Model.Time;
 
-import java.time.LocalDate;
-
 public class PartidaDTO {
 
-    private long id;
+    private Long id;
 
     @ManyToOne
     private Time timeCasa;
@@ -17,27 +15,29 @@ public class PartidaDTO {
     private Time timeVisitante;
     @ManyToOne
     private Estadio estadio;
+    private Long golsTimeCasa;
+    private Long golsTimeVisitante;
     private String resultado;
-    private LocalDate dataPartida;
+    private LocalDateTime dataHoraPartida;
 
     public PartidaDTO() {
 
     }
 
-    public PartidaDTO(long id, Time timeCasa, Time timeVisitante, Estadio estadio, String resultado, LocalDate dataPartida) {
-        this.id = id;
+    public PartidaDTO(Time timeCasa, Time timeVisitante, Estadio estadio, Long golsTimeCasa, Long golsTimeVisitante, LocalDateTime dataHoraPartida) {
         this.timeCasa = timeCasa;
         this.timeVisitante = timeVisitante;
         this.estadio = estadio;
-        this.resultado = resultado;
-        this.dataPartida = dataPartida;
+        this.golsTimeCasa = golsTimeCasa;
+        this.golsTimeVisitante = golsTimeVisitante;
+        this.dataHoraPartida = dataHoraPartida;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -65,6 +65,22 @@ public class PartidaDTO {
         this.estadio = estadio;
     }
 
+    public Long getGolsTimeCasa() {
+        return golsTimeCasa;
+    }
+
+    public void setGolsTimeCasa(Long golsTimeCasa) {
+        this.golsTimeCasa = golsTimeCasa;
+    }
+
+    public Long getGolsTimeVisitante() {
+        return golsTimeVisitante;
+    }
+
+    public void setGolsTimeVisitante(Long golsTimeVisitante) {
+        this.golsTimeVisitante = golsTimeVisitante;
+    }
+
     public String getResultado() {
         return resultado;
     }
@@ -73,11 +89,12 @@ public class PartidaDTO {
         this.resultado = resultado;
     }
 
-    public LocalDate getDataPartida() {
-        return dataPartida;
+    public LocalDateTime getDataHoraPartida() {
+        return dataHoraPartida;
     }
 
-    public void setDataPartida(LocalDate dataPartida) {
-        this.dataPartida = dataPartida;
+    public void setDataHoraPartida(LocalDateTime dataHoraPartida) {
+        this.dataHoraPartida = dataHoraPartida;
     }
+
 }

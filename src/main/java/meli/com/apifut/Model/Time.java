@@ -3,8 +3,7 @@ package meli.com.apifut.Model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "time")
@@ -15,7 +14,7 @@ public class Time {
 
     private String nome;
     private String siglaEstado;
-    private LocalDate dataCriacao;
+    private LocalDateTime dataCriacao;
     private Boolean status;
 
     public Time(){
@@ -46,11 +45,11 @@ public class Time {
         this.siglaEstado = siglaEstado;
     }
 
-    public LocalDate getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(LocalDate dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 

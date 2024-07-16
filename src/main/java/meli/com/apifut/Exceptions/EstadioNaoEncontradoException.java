@@ -2,14 +2,14 @@ package meli.com.apifut.Exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class NomeTimeInvalidoException extends RuntimeException{
+public class EstadioNaoEncontradoException extends RuntimeException{
     private final HttpStatus status;
 
-    public NomeTimeInvalidoException(HttpStatus status) {
-        super("Nomes com menos que 2 letras são inválidos!");
+    public EstadioNaoEncontradoException(HttpStatus status) {
+        super("Estadio não encontrado!");
         this.status = status;
     }
-    public NomeTimeInvalidoException(String message, HttpStatus status) {
+    public EstadioNaoEncontradoException(String message, HttpStatus status  ) {
         super(message);
         this.status = status;
     }
@@ -17,4 +17,3 @@ public class NomeTimeInvalidoException extends RuntimeException{
         return status;
     }
 }
-

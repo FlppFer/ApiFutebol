@@ -6,10 +6,12 @@ import meli.com.apifut.Model.Time;
 import meli.com.apifut.Repository.TimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,15 +57,15 @@ public class TimeService {
 
     public void criarClube(TimeDTO timeDTO) {
         if (timeDTO.getNome() == null || timeDTO.getSiglaEstado() == null || timeDTO.getDataCriacao() == null) {
-            throw new CamposObrigatoriosException();
+            throw new CamposObrigatoriosException(HttpStatus.BAD_REQUEST);
         } else if (timeDTO.getNome().length() < 2) {
-            throw new NomeTimeInvalidoException();
+            throw new NomeTimeInvalidoException(HttpStatus.BAD_REQUEST);
         } else if (!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
-            throw new SiglaInvalidaException();
-        } else if (timeDTO.getDataCriacao().isAfter(LocalDate.now())) {
-            throw new DataNoFuturoException();
+            throw new SiglaInvalidaException(HttpStatus.BAD_REQUEST);
+        } else if (timeDTO.getDataCriacao().isAfter(LocalDateTime.now())) {
+            throw new DataConflitoException(HttpStatus.BAD_REQUEST);
         } else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
-            throw new TimeDuplicadoException();
+            throw new TimeDuplicadoException(HttpStatus.CONFLICT);
         } else {
             Time time = converterEntidade(timeDTO);
             timeRepository.save(time);
@@ -74,22 +76,22 @@ public class TimeService {
     public void editarClube(Long id, TimeDTO timeDTO) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isEmpty()) {
-            throw new TimeNaoEncontradoException();
+            throw new EntidadeNaoEncontradaException(HttpStatus.NOT_FOUND);
         } else if (timeDTO.getNome().length() < 2) {
-            throw new NomeTimeInvalidoException();
+            throw new NomeTimeInvalidoException(HttpStatus.BAD_REQUEST);
         } else if (!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
-            throw new SiglaInvalidaException();
+            throw new SiglaInvalidaException(HttpStatus.BAD_REQUEST);
         } else if (timeDTO.getDataCriacao().isAfter(timeRepository.findPrimeiraPartida(id))) {
-            throw new DataAposPartidaException();
+            throw new DataConflitoException(HttpStatus.CONFLICT);
         } else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
-            throw new TimeDuplicadoException();
+            throw new TimeDuplicadoException(HttpStatus.CONFLICT);
         }
     }
 
     public void inativarClube(long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isEmpty()) {
-            throw new TimeNaoEncontradoException();
+            throw new EntidadeNaoEncontradaException(HttpStatus.NOT_FOUND);
         }
         Time time = optionalTime.get();
         time.setStatus(false);
@@ -100,7 +102,7 @@ public class TimeService {
     public TimeDTO buscarClubePorID(Long id) {
         Optional<Time> optionalTime = timeRepository.findById(id);
         if (optionalTime.isEmpty()) {
-            throw new TimeNaoEncontradoException();
+            throw new EntidadeNaoEncontradaException(HttpStatus.NOT_FOUND);
         }
         return converterParaDTO(optionalTime.get());
     }
@@ -118,11 +120,15 @@ public class TimeService {
             );
 
         }
+        if (timesFiltrados.isEmpty()) {
+            return Page.empty();
+        }
         return timesFiltrados.map(this::converterParaDTO);
     }
 
     public TimeDTO converterParaDTO(Time time) {
         TimeDTO timeDTO = new TimeDTO();
+        timeDTO.setId(time.getId());
         timeDTO.setStatus(time.getStatus());
         timeDTO.setNome(time.getNome());
         timeDTO.setSiglaEstado(time.getSiglaEstado());

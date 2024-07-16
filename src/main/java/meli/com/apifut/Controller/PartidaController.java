@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,49 +20,31 @@ public class PartidaController {
 
     @PostMapping("/criarPartida")
     public ResponseEntity<?> criarNovaPartida(@RequestBody PartidaDTO partidaDTO) {
-        try {
             partidaService.criarNovaPartida(partidaDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("A partida entre " + partidaDTO.getTimeCasa().getNome() + "e o time " + partidaDTO.getTimeVisitante().getNome() + "foi registrada com sucesso!");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("A partida não foi registrada, verifique se todos os campos foram preenchidos corretamente!" + e);
-        }
+            return ResponseEntity.status(HttpStatus.CREATED).body("A partida foi registrada com sucesso!");
 
     }
 
-    @DeleteMapping("/deletarPartidaPorID/{id}")
-    public ResponseEntity<?> deletarPartida(@PathVariable Long id) {
-        try {
+    @DeleteMapping("/deletarPartidaPorID")
+    public ResponseEntity<?> deletarPartida(@RequestParam Long id) {
             partidaService.removerPartidaPorID(id);
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("A partida não foi encontrada!");
-
-        }
     }
 
-    @PutMapping("/editarPartidaPorId/{id}")
-    public ResponseEntity<?> editarPartida(@PathVariable long id, @RequestBody PartidaDTO partidaDTO) {
-        try {
+    @PutMapping("/editarPartidaPorId")
+    public ResponseEntity<?> editarPartida(@RequestParam long id, @RequestBody PartidaDTO partidaDTO) {
             partidaService.editarPartida(id, partidaDTO);
             return ResponseEntity.status(HttpStatus.OK).body("A partida entre " + partidaDTO.getTimeCasa() + " e "+ partidaDTO.getTimeVisitante() + " foi editada com sucesso!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("A partida não foi encontrada ou um dos campos não foi preenchido corretamente!");
-        }
-
     }
 
-    @GetMapping("/buscarPartidaPorId/{id}")
-    public ResponseEntity<?> buscarPartidaPorId(@PathVariable long id) {
-        try {
-            Partida partida = partidaService.buscarPartidaPorId(id);
-            return ResponseEntity.ok(partida);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("A partida com o id digitado não foi encontrada!");
-        }
+    @GetMapping("/buscarPartidaPorId")
+    public ResponseEntity<?> buscarPartidaPorId(@RequestParam long id) {
+            PartidaDTO partidaDTO = partidaService.buscarPartidaPorId(id);
+            return ResponseEntity.ok(partidaDTO);
     }
 
     @GetMapping("/listarPartidas/")
-    public ResponseEntity<Page<Partida>> listarTodasPartidas(
+    public ResponseEntity<Page<PartidaDTO>> listarTodasPartidas(
             @RequestParam(required = false) Long timeId,
             @RequestParam(required = false) Long estadioId,
             @RequestParam(defaultValue = "0") int page,
@@ -69,7 +52,7 @@ public class PartidaController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection
     ){
-        Page<Partida> partidas = partidaService.listarTodasPartidas(timeId, estadioId,
+        Page<PartidaDTO> partidas = partidaService.listarTodasPartidas(timeId, estadioId,
                 PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
         return ResponseEntity.ok(partidas);
         }

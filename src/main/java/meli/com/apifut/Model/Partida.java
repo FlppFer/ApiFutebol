@@ -2,6 +2,7 @@ package meli.com.apifut.Model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "partida")
@@ -16,52 +17,31 @@ public class Partida {
     private Time timeVisitante;
     @ManyToOne
     private Estadio estadio;
+    private Long golsTimeCasa;
+    private Long golsTimeVisitante;
     private String resultado;
-    private LocalDate dataPartida;
+    private LocalDateTime dataHoraPartida;
 
     public Partida() {
 
     }
 
-    public Partida(Long id, Time timeCasa, Time timeVisitante, Estadio estadio, String resultado, LocalDate dataPartida) {
-        this.id = id;
+    public Partida(Time timeCasa, Time timeVisitante, Estadio estadio, Long golsTimeCasa, Long golsTimeVisitante, String resultado, LocalDateTime dataHoraPartida) {
         this.timeCasa = timeCasa;
         this.timeVisitante = timeVisitante;
         this.estadio = estadio;
+        this.golsTimeCasa = golsTimeCasa;
+        this.golsTimeVisitante = golsTimeVisitante;
         this.resultado = resultado;
-        this.dataPartida = dataPartida;
+        this.dataHoraPartida = dataHoraPartida;
     }
 
-    public LocalDate getDataPartida() {
-        return dataPartida;
+    public Long getId() {
+        return id;
     }
 
-    public void setDataPartida(LocalDate dataPartida) {
-        this.dataPartida = dataPartida;
-    }
-
-    public String getResultado() {
-        return resultado;
-    }
-
-    public void setResultado(String resultado) {
-        this.resultado = resultado;
-    }
-
-    public Estadio getEstadio() {
-        return estadio;
-    }
-
-    public void setEstadio(Estadio estadio) {
-        this.estadio = estadio;
-    }
-
-    public Time getTimeVisitante() {
-        return timeVisitante;
-    }
-
-    public void setTimeVisitante(Time timeVisitante) {
-        this.timeVisitante = timeVisitante;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Time getTimeCasa() {
@@ -72,11 +52,52 @@ public class Partida {
         this.timeCasa = timeCasa;
     }
 
-    public Long getId() {
-        return id;
+    public Time getTimeVisitante() {
+        return timeVisitante;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTimeVisitante(Time timeVisitante) {
+        this.timeVisitante = timeVisitante;
     }
+
+    public Estadio getEstadio() {
+        return estadio;
+    }
+
+    public void setEstadio(Estadio estadio) {
+        this.estadio = estadio;
+    }
+
+    public Long getGolsTimeVisitante() {
+        return golsTimeVisitante;
+    }
+
+    public void setGolsTimeVisitante(Long golsTimeVisitante) {
+        this.golsTimeVisitante = golsTimeVisitante;
+    }
+
+    public Long getGolsTimeCasa() {
+        return golsTimeCasa;
+    }
+
+    public void setGolsTimeCasa(Long golsTimeCasa) {
+        this.golsTimeCasa = golsTimeCasa;
+    }
+
+    public String getResultado() {
+        return resultado;
+    }
+
+    public void setResultado(String resultado) {
+        this.resultado = resultado;
+    }
+
+    public LocalDateTime getDataHoraPartida() {
+        return dataHoraPartida;
+    }
+
+    public void setDataHoraPartida(LocalDateTime dataHoraPartida) {
+        this.dataHoraPartida = dataHoraPartida;
+    }
+
 }

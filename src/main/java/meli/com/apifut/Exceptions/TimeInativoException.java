@@ -2,19 +2,20 @@ package meli.com.apifut.Exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class NomeTimeInvalidoException extends RuntimeException{
+public class TimeInativoException extends RuntimeException{
     private final HttpStatus status;
 
-    public NomeTimeInvalidoException(HttpStatus status) {
-        super("Nomes com menos que 2 letras são inválidos!");
+    public TimeInativoException(HttpStatus status) {
+        super("Um dos times passados está inativo");
         this.status = status;
     }
-    public NomeTimeInvalidoException(String message, HttpStatus status) {
+    public TimeInativoException(String message, HttpStatus status) {
         super(message);
         this.status = status;
     }
+
     public HttpStatus getStatus() {
         return status;
     }
-}
 
+}

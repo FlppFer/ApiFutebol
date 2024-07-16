@@ -1,10 +1,19 @@
 package meli.com.apifut.Exceptions;
 
+import org.springframework.http.HttpStatus;
+
 public class TimeDuplicadoException extends RuntimeException{
-    public TimeDuplicadoException() {
-        super("Um time de mesmo nome já está cadastrado neste estado!");
+    private final HttpStatus status;
+
+    public TimeDuplicadoException(HttpStatus status) {
+        super("Não é possível passar dois times com o mesmo nome!");
+        this.status = status;
     }
-    public TimeDuplicadoException(String message) {
+    public TimeDuplicadoException(String message, HttpStatus status) {
         super(message);
+        this.status = status;
+    }
+    public HttpStatus getStatus() {
+        return status;
     }
 }
