@@ -6,7 +6,6 @@ import meli.com.apifut.Model.Time;
 import meli.com.apifut.Repository.TimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -57,15 +56,15 @@ public class TimeService {
 
     public void criarClube(TimeDTO timeDTO) {
         if (timeDTO.getNome() == null || timeDTO.getSiglaEstado() == null || timeDTO.getDataCriacao() == null) {
-            throw new CamposObrigatoriosException(HttpStatus.BAD_REQUEST);
+            throw new CamposObrigatoriosException("Preencha todos os dados obrigatórios ",HttpStatus.BAD_REQUEST);
         } else if (timeDTO.getNome().length() < 2) {
-            throw new NomeTimeInvalidoException(HttpStatus.BAD_REQUEST);
+            throw new DadosInvalidosException("O nome do time não pode ser nulo ou conter menos que 2 letras ",HttpStatus.BAD_REQUEST);
         } else if (!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
-            throw new SiglaInvalidaException(HttpStatus.BAD_REQUEST);
+            throw new DadosInvalidosException("A sigla de Estado informada não existe",HttpStatus.BAD_REQUEST);
         } else if (timeDTO.getDataCriacao().isAfter(LocalDateTime.now())) {
-            throw new DataConflitoException(HttpStatus.BAD_REQUEST);
+            throw new ConflitoDeDadosException("Não é possível criar um time em uma data no futuro",HttpStatus.BAD_REQUEST);
         } else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
-            throw new TimeDuplicadoException(HttpStatus.CONFLICT);
+            throw new EntidadeDuplicadaException("Já existe um clube com esse nome no mesmo estado",HttpStatus.CONFLICT);
         } else {
             Time time = converterEntidade(timeDTO);
             timeRepository.save(time);
@@ -74,51 +73,54 @@ public class TimeService {
     }
 
     public void editarClube(Long id, TimeDTO timeDTO) {
-        Optional<Time> optionalTime = timeRepository.findById(id);
-        if (optionalTime.isEmpty()) {
-            throw new EntidadeNaoEncontradaException(HttpStatus.NOT_FOUND);
-        } else if (timeDTO.getNome().length() < 2) {
-            throw new NomeTimeInvalidoException(HttpStatus.BAD_REQUEST);
-        } else if (!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
-            throw new SiglaInvalidaException(HttpStatus.BAD_REQUEST);
-        } else if (timeDTO.getDataCriacao().isAfter(timeRepository.findPrimeiraPartida(id))) {
-            throw new DataConflitoException(HttpStatus.CONFLICT);
-        } else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
-            throw new TimeDuplicadoException(HttpStatus.CONFLICT);
+        Time time = timeRepository.findTimeById(id);
+        if (time == null){
+            throw new EntidadeNaoEncontradaException("Não existe um time com o ID informado",HttpStatus.NOT_FOUND);
+        }else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
+            throw new EntidadeDuplicadaException("Já existe um time com mesmo nome cadastrado neste estado",HttpStatus.CONFLICT);
+        }else if (timeDTO.getDataCriacao().isAfter(timeRepository.findPrimeiraPartidaById(id)) || timeRepository.findPrimeiraPartidaById(id) == null){
+            throw new ConflitoDeDadosException("A data de criação do time não pode ser após uma partida registrada em que ele ja participou",HttpStatus.CONFLICT);
+        } else if (timeDTO.getDataCriacao().isAfter(LocalDateTime.now())){
+            throw new DadosInvalidosException("A data de criação do time não pode ser no futuro",HttpStatus.BAD_REQUEST);
+        }else if (!estadosBrasileiros.contains(timeDTO.getSiglaEstado())) {
+            throw new DadosInvalidosException("A sigla de Estado informada não existe",HttpStatus.BAD_REQUEST);
+        }else if (timeDTO.getNome().length() < 2){
+            throw new DadosInvalidosException("O nome do time não deve ser menor que 2 caracteres",HttpStatus.BAD_REQUEST);
         }
-    }
-
-    public void inativarClube(long id) {
-        Optional<Time> optionalTime = timeRepository.findById(id);
-        if (optionalTime.isEmpty()) {
-            throw new EntidadeNaoEncontradaException(HttpStatus.NOT_FOUND);
+            time.setNome(timeDTO.getNome());
+            time.setSiglaEstado(timeDTO.getSiglaEstado());
+            time.setDataCriacao(timeDTO.getDataCriacao());
+            time.setStatus(timeDTO.getStatus());
+            timeRepository.save(time);
         }
-        Time time = optionalTime.get();
-        time.setStatus(false);
-        timeRepository.save(time);
 
+    public void inativarClube(Long id) {
+        if (timeRepository.findTimeById(id) == null) {
+            throw new EntidadeNaoEncontradaException("Não existe um time com o ID informado",HttpStatus.NOT_FOUND);
+        } {
+            Time time = timeRepository.findTimeById(id);
+            time.setStatus(false);
+            timeRepository.save(time);
+        }
     }
 
     public TimeDTO buscarClubePorID(Long id) {
-        Optional<Time> optionalTime = timeRepository.findById(id);
-        if (optionalTime.isEmpty()) {
-            throw new EntidadeNaoEncontradaException(HttpStatus.NOT_FOUND);
+        if (timeRepository.findTimeById(id) == null) {
+            throw new EntidadeNaoEncontradaException("Não existe um time com o ID informado",HttpStatus.NOT_FOUND);
         }
-        return converterParaDTO(optionalTime.get());
+        return converterParaDTO(timeRepository.findTimeById(id));
     }
 
-    public Page<TimeDTO> listarTimes(String nome, String estado, Boolean status, Pageable pageable) {
+    public Page<TimeDTO> listarTimes(String nome, String siglaEstado, Boolean status, Pageable pageable) {
        Page<Time> timesFiltrados;
-        if (nome == null && estado == null && status == null) {
+        if (nome == null && siglaEstado == null && status == null) {
             timesFiltrados = timeRepository.findAll(pageable);
         } else {
-            timesFiltrados = timeRepository.findAllByNomeContainingAndSiglaEstadoContainingAndStatus(
+            timesFiltrados = timeRepository.findAllByNomeOrSiglaEstadoORStatus(
                     nome != null ? nome : "",
-                    estado != null ? estado : "",
+                    siglaEstado != null ? siglaEstado : "",
                     status,
-                    pageable
-            );
-
+                    pageable);
         }
         if (timesFiltrados.isEmpty()) {
             return Page.empty();

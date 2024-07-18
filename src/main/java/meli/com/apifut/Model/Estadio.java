@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "estadio")
 public class Estadio {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,6 +13,14 @@ public class Estadio {
 
     public Estadio() {
 
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Estadio(String nome) {
@@ -29,13 +36,4 @@ public class Estadio {
         this.nome = nome;
     }
 
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
 }
-

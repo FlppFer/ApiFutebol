@@ -17,7 +17,7 @@ public class  TimeController {
     @Autowired
     private TimeService timeService;
 
-    @PostMapping("/criar")
+    @PostMapping("/criarTime")
     public ResponseEntity<?> criarClube(@RequestBody TimeDTO timeDTO) {
         timeService.criarClube(timeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("O Clube '" + timeDTO.getNome() + "' foi criado com sucesso");
@@ -48,18 +48,16 @@ public class  TimeController {
     @GetMapping("/listarTimes")
     public ResponseEntity<Page<TimeDTO>> listarTimes(
             @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String siglaEstado,
             @RequestParam(required = false) Boolean status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nome") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<TimeDTO> times = timeService.listarTimes(nome, estado, status,
+        Page<TimeDTO> times = timeService.listarTimes(nome, siglaEstado, status,
                 PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
 
         return ResponseEntity.ok(times);
     }
 }
-
-

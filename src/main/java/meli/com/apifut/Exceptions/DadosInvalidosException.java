@@ -2,14 +2,14 @@ package meli.com.apifut.Exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class TimeDuplicadoException extends RuntimeException{
+public class DadosInvalidosException extends RuntimeException{
     private final HttpStatus status;
 
-    public TimeDuplicadoException(HttpStatus status) {
-        super("Não é possível passar dois times com o mesmo nome!");
+    public DadosInvalidosException(HttpStatus status) {
+        super("A sigla do estado é inválida!");
         this.status = status;
     }
-    public TimeDuplicadoException(String message, HttpStatus status) {
+    public DadosInvalidosException(String message, HttpStatus status) {
         super(message);
         this.status = status;
     }

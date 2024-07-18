@@ -2,14 +2,14 @@ package meli.com.apifut.Exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class NomeTimeInvalidoException extends RuntimeException{
+public class EntidadeDuplicadaException extends RuntimeException{
     private final HttpStatus status;
 
-    public NomeTimeInvalidoException(HttpStatus status) {
-        super("Nomes com menos que 2 letras são inválidos!");
+    public EntidadeDuplicadaException(HttpStatus status) {
+        super("Não é possível passar dois times com o mesmo nome!");
         this.status = status;
     }
-    public NomeTimeInvalidoException(String message, HttpStatus status) {
+    public EntidadeDuplicadaException(String message, HttpStatus status) {
         super(message);
         this.status = status;
     }
@@ -17,4 +17,3 @@ public class NomeTimeInvalidoException extends RuntimeException{
         return status;
     }
 }
-

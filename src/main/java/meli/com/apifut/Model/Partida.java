@@ -1,7 +1,6 @@
 package meli.com.apifut.Model;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity

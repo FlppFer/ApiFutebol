@@ -1,15 +1,18 @@
 package meli.com.apifut.Service;
 
 import meli.com.apifut.DTO.EstadioDTO;
+import meli.com.apifut.Exceptions.CamposObrigatoriosException;
+import meli.com.apifut.Exceptions.EntidadeDuplicadaException;
+import meli.com.apifut.Exceptions.EntidadeNaoEncontradaException;
 import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Repository.EstadioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 public class EstadioService {
@@ -18,36 +21,47 @@ public class EstadioService {
     private EstadioRepository estadioRepository;
 
     public void criarEstadio(EstadioDTO estadioDTO) {
-        if (estadioDTO.getNome()!=null){
+        if (estadioDTO.getNome().length() < 3) {
+            throw new CamposObrigatoriosException("O nome do estádio não deve ser ser e deve ter no mínimo, 3 caracteres", HttpStatus.BAD_REQUEST);
+        } else if (estadioRepository.findEstadioByNome(estadioDTO.getNome()) != null){
+            throw new EntidadeDuplicadaException("Já existe um estádio com o nome informado", HttpStatus.CONFLICT);
+        }   {
             Estadio estadio = converterEntidade(estadioDTO);
             estadioRepository.save(estadio);
-        } else {
-            throw new IllegalArgumentException();
         }
     }
 
-    public void editarEstadio(long id, EstadioDTO estadioDTO) {
-        Optional<Estadio> optionalEstadio = estadioRepository.findById(id);
-        if (optionalEstadio.isPresent()) {
-            Estadio estadio = optionalEstadio.get();
+    public void editarEstadio(Long id, EstadioDTO estadioDTO) {
+        Estadio estadio = estadioRepository.findEstadioById(id);
+        if (estadio == null){
+            throw new EntidadeNaoEncontradaException("Estádio com ID informado não encontrado", HttpStatus.NOT_FOUND);
+        }else if (estadioDTO.getNome().length() < 3 || (estadioDTO.getNome() == null)){
+            throw new CamposObrigatoriosException("O nome do estádio não deve ser nulo e deve ter no mínimo, 3 caracteres", HttpStatus.BAD_REQUEST);
+        } else if (estadioRepository.findEstadioByNome(estadioDTO.getNome()) != null){
+            throw new EntidadeDuplicadaException("Já existe um estádio com o nome informado", HttpStatus.CONFLICT);
+        }   {
             estadio.setNome(estadioDTO.getNome());
             estadioRepository.save(estadio);
-        } else {
-            throw new NoSuchElementException();
         }
     }
 
-    public Estadio buscarEstadioPorID(long idEstadio) {
-        Optional<Estadio> optionalEstadio = estadioRepository.findById(idEstadio);
-        if (optionalEstadio.isPresent()) {
-            return optionalEstadio.get();
+    public EstadioDTO buscarEstadioPorID(Long id) {
+        if (!estadioRepository.existsById(id)) {
+            throw new EntidadeNaoEncontradaException("Estádio com ID informado não encontrado", HttpStatus.NOT_FOUND);
         } else {
-            throw new NoSuchElementException();
+            return converterDTO(estadioRepository.findEstadioById(id));
         }
     }
 
-    public Page<Estadio> listarEstadios(Pageable pageable) {
-        return estadioRepository.findAll(pageable);
+    public Page<EstadioDTO> listarEstadios(Pageable pageable) {
+        Page<EstadioDTO> listarEstadios;
+        Page<Estadio> listaTotalEstadios = estadioRepository.findAll(pageable);
+        if (listaTotalEstadios.isEmpty()) {
+            listarEstadios = Page.empty();
+        } else {
+            listarEstadios = estadioRepository.findAll(pageable).map(this::converterDTO);
+        }
+        return listarEstadios;
     }
 
 
@@ -60,7 +74,10 @@ public class EstadioService {
 
     private EstadioDTO converterDTO(Estadio estadio) {
         EstadioDTO estadioDTO = new EstadioDTO();
+
+        estadioDTO.setId(estadio.getId());
         estadioDTO.setNome(estadio.getNome());
+
 
         return estadioDTO;
     }

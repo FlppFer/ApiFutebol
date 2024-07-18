@@ -2,8 +2,7 @@ package meli.com.apifut.Service;
 
 import meli.com.apifut.Exceptions.*;
 import meli.com.apifut.Exceptions.CamposObrigatoriosException;
-import meli.com.apifut.Exceptions.TimeDuplicadoException;
-import meli.com.apifut.Exceptions.EntidadeNaoEncontradaException;
+import meli.com.apifut.Exceptions.EntidadeDuplicadaException;
 import meli.com.apifut.Model.Partida;
 import meli.com.apifut.DTO.PartidaDTO;
 import meli.com.apifut.Repository.EstadioRepository;
@@ -14,9 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class PartidaService {
@@ -33,23 +30,23 @@ public class PartidaService {
         if (partidaDTO.getTimeCasa() == null || partidaDTO.getTimeVisitante() == null || partidaDTO.getEstadio() == null || partidaDTO.getGolsTimeCasa() == null || partidaDTO.getGolsTimeVisitante() == null || partidaDTO.getDataHoraPartida() == null) {
             throw new CamposObrigatoriosException("Preencha todos os campos obrigatórios!", HttpStatus.BAD_REQUEST);
         } else if (partidaDTO.getTimeCasa() == partidaDTO.getTimeVisitante()) {
-            throw new TimeDuplicadoException("O time da casa e o time visitante não podem ser iguais!", HttpStatus.BAD_REQUEST);
+            throw new EntidadeDuplicadaException("O time da casa e o time visitante não podem ser iguais!", HttpStatus.BAD_REQUEST);
         } else if (!timeRepository.existsById(partidaDTO.getTimeCasa().getId()) && timeRepository.existsById(partidaDTO.getTimeVisitante().getId())) {
             throw new EntidadeNaoEncontradaException("O time da casa ou o time visitante não existe!", HttpStatus.BAD_REQUEST);
         } else if (!estadioRepository.existsById(partidaDTO.getEstadio().getId())) {
-            throw new EstadioNaoEncontradoException("O estádio não foi encontrado!", HttpStatus.BAD_REQUEST);
+            throw new EntidadeNaoEncontradaException("O estádio não foi encontrado!", HttpStatus.BAD_REQUEST);
         } else if (partidaDTO.getGolsTimeCasa() < 0 || partidaDTO.getGolsTimeVisitante() < 0) {
-            throw new GolsInvalidosException("Os gols não podem ser negativos!", HttpStatus.BAD_REQUEST);
+            throw new DadosInvalidosException("Os gols não podem ser negativos!", HttpStatus.BAD_REQUEST);
         } else if (partidaDTO.getDataHoraPartida().isAfter(LocalDateTime.now())) {
-            throw new DataConflitoException("A data da partida não pode ser no futuro!", HttpStatus.BAD_REQUEST);
+            throw new ConflitoDeDadosException("A data da partida não pode ser no futuro!", HttpStatus.BAD_REQUEST);
         } else if (partidaDTO.getDataHoraPartida().isBefore(timeRepository.findDataCriacaoTime(partidaDTO.getTimeCasa().getId())) || partidaDTO.getDataHoraPartida().isBefore(timeRepository.findDataCriacaoTime(partidaDTO.getTimeVisitante().getId()))){
-            throw new DataConflitoException("A data da partida não pode ser antes da data de criação de um dos times!", HttpStatus.CONFLICT);
+            throw new ConflitoDeDadosException("A data da partida não pode ser antes da data de criação de um dos times!", HttpStatus.CONFLICT);
         } else if (timeRepository.isTimeAtivo((partidaDTO.getTimeCasa()).getId()) == null || timeRepository.isTimeAtivo((partidaDTO.getTimeVisitante()).getId()) == null) {
             throw new TimeInativoException("O time da casa ou o time visitante não está ativo!", HttpStatus.BAD_REQUEST);
         } else if(partidaRepository.findConflitoHorarioPartida(partidaDTO.getDataHoraPartida(), partidaDTO.getTimeCasa().getId()) != null && partidaRepository.findConflitoHorarioPartida(partidaDTO.getDataHoraPartida(), partidaDTO.getTimeVisitante().getId()) != null){
-            throw new DataConflitoException("Um dos times jogou uma partida recentemente!", HttpStatus.CONFLICT);
+            throw new ConflitoDeDadosException("Um dos times jogou uma partida recentemente!", HttpStatus.CONFLICT);
         }else if (partidaRepository.findPartidaByDataAndEstadio(partidaDTO.getDataHoraPartida(), partidaDTO.getEstadio().getId()) != null){
-            throw new DataConflitoException("Já existe uma partida marcada para esse estádio nessa data!", HttpStatus.CONFLICT);
+            throw new ConflitoDeDadosException("Já existe uma partida marcada para esse estádio nessa data!", HttpStatus.CONFLICT);
         }
         Partida partida = converterEntidade(partidaDTO);
         partidaRepository.save(partida);
@@ -58,34 +55,35 @@ public class PartidaService {
     }
 
     public void editarPartida(Long id, PartidaDTO partidaDTO) {
-        Optional<Partida> optionalPartida = partidaRepository.findById(id);
-        if (optionalPartida.isEmpty()) {
+        if (!partidaRepository.existsById(id)) {
             throw new EntidadeNaoEncontradaException("A partida não foi encontrada!", HttpStatus.NOT_FOUND);
         }else if(partidaDTO.getId() == null || partidaDTO.getTimeCasa() == null || partidaDTO.getTimeVisitante() == null || partidaDTO.getEstadio() == null || partidaDTO.getGolsTimeCasa() == null || partidaDTO.getGolsTimeVisitante() == null || partidaDTO.getDataHoraPartida() == null){
             throw new CamposObrigatoriosException("Preencha todos os campos obrigatórios!", HttpStatus.BAD_REQUEST);
         }else if (partidaDTO.getTimeCasa() == partidaDTO.getTimeVisitante()) {
-            throw new TimeDuplicadoException("O time da casa e o time visitante não podem ser iguais!", HttpStatus.BAD_REQUEST);
+            throw new EntidadeDuplicadaException("O time da casa e o time visitante não podem ser iguais!", HttpStatus.BAD_REQUEST);
         } else if(!timeRepository.existsById(partidaDTO.getTimeCasa().getId()) && timeRepository.existsById(partidaDTO.getTimeVisitante().getId())) {
             throw new EntidadeNaoEncontradaException("O time da casa ou o time visitante não existe!", HttpStatus.BAD_REQUEST);
         } else if (!estadioRepository.existsById(partidaDTO.getEstadio().getId())) {
-            throw new EstadioNaoEncontradoException("O estádio não foi encontrado!", HttpStatus.BAD_REQUEST);
+            throw new EntidadeNaoEncontradaException("O estádio não foi encontrado!", HttpStatus.BAD_REQUEST);
         } else if (partidaDTO.getGolsTimeCasa() < 0 || partidaDTO.getGolsTimeVisitante() < 0){
-            throw new GolsInvalidosException("Os gols não podem ser negativos!", HttpStatus.BAD_REQUEST);
+            throw new DadosInvalidosException("Os gols não podem ser negativos!", HttpStatus.BAD_REQUEST);
         }else if (partidaDTO.getDataHoraPartida().isAfter(LocalDateTime.now())) {
-            throw new DataConflitoException("A data da partida não pode ser no futuro!", HttpStatus.BAD_REQUEST);
+            throw new ConflitoDeDadosException("A data da partida não pode ser no futuro!", HttpStatus.BAD_REQUEST);
         }else if (partidaDTO.getDataHoraPartida().isBefore(timeRepository.findDataCriacaoTime(partidaDTO.getTimeCasa().getId())) || partidaDTO.getDataHoraPartida().isBefore(timeRepository.findDataCriacaoTime(partidaDTO.getTimeVisitante().getId()))) {
-            throw new DataConflitoException("A data da partida não pode ser antes da data de criação de um dos times!", HttpStatus.CONFLICT);
+            throw new ConflitoDeDadosException("A data da partida não pode ser antes da data de criação de um dos times!", HttpStatus.CONFLICT);
         }else if (timeRepository.isTimeAtivo((partidaDTO.getTimeCasa()).getId()) == null || timeRepository.isTimeAtivo((partidaDTO.getTimeVisitante()).getId()) == null) {
             throw new TimeInativoException("O time da casa ou o time visitante não está ativo!", HttpStatus.CONFLICT);
         }else if(partidaRepository.findConflitoHorarioPartida(partidaDTO.getDataHoraPartida(), partidaDTO.getTimeCasa().getId()) != null && partidaRepository.findConflitoHorarioPartida(partidaDTO.getDataHoraPartida(), partidaDTO.getTimeVisitante().getId()) != null){
-            throw new DataConflitoException("Um dos times jogou uma partida recentemente!", HttpStatus.CONFLICT);
+            throw new ConflitoDeDadosException("Um dos times jogou uma partida recentemente!", HttpStatus.CONFLICT);
         }else if (partidaRepository.findPartidaByDataAndEstadio(partidaDTO.getDataHoraPartida(), partidaDTO.getEstadio().getId()) != null){
-            throw new DataConflitoException("Já existe uma partida marcada para esse estádio nessa data!", HttpStatus.CONFLICT);
+            throw new ConflitoDeDadosException("Já existe uma partida marcada para esse estádio nessa data!", HttpStatus.CONFLICT);
         }
-            Partida partida = optionalPartida.get();
+            Partida partida = partidaRepository.findPartidaById(id);
             partida.setTimeCasa(partidaDTO.getTimeCasa());
             partida.setTimeVisitante(partidaDTO.getTimeVisitante());
-            partida.setResultado(partidaDTO.getResultado());
+            partida.setGolsTimeCasa(partidaDTO.getGolsTimeCasa());
+            partida.setGolsTimeVisitante(partidaDTO.getGolsTimeVisitante());
+            partida.setResultado(calcularResultado(partidaDTO.getGolsTimeCasa(), partidaDTO.getGolsTimeVisitante()));
             partida.setEstadio(partidaDTO.getEstadio());
             partida.setDataHoraPartida(partidaDTO.getDataHoraPartida());
             partidaRepository.save(partida);
@@ -93,8 +91,7 @@ public class PartidaService {
     }
 
     public void removerPartidaPorID(long id) {
-        Optional<Partida> optionalPartida = partidaRepository.findById(id);
-        if (optionalPartida.isEmpty()) {
+        if (!partidaRepository.existsById(id)) {
             throw new EntidadeNaoEncontradaException("Uma partida com esse id não foi encontrada!", HttpStatus.NOT_FOUND);
         } else {
             partidaRepository.deleteById(id);
@@ -102,20 +99,22 @@ public class PartidaService {
     }
 
     public PartidaDTO buscarPartidaPorId(Long id) {
-        Optional<Partida> optionalPartida = partidaRepository.findById(id);
-        if (optionalPartida.isEmpty()) {
+        if (!partidaRepository.existsById(id)) {
             throw new EntidadeNaoEncontradaException("Uma partida com esse id não foi encontrada!",HttpStatus.NOT_FOUND);
         }
-        return converterDTO(optionalPartida.get());
+        return converterDTO(partidaRepository.findPartidaById(id));
     }
 
 
-    public Page<PartidaDTO> listarTodasPartidas(Long timeId, Long estadioId, Pageable pageable) {
+    public Page<PartidaDTO> listarPartidas(Long timeId, Long estadioId, Pageable pageable) {
         Page<Partida> partidasFiltradas;
         if (timeId == null && estadioId == null) {
             partidasFiltradas = partidaRepository.findAll(pageable);
         } else{
-            partidasFiltradas = partidaRepository.findAllByTimeCasaIdOrTimeVisitanteIdOrEstadioId(timeId, timeId, estadioId, pageable);
+            partidasFiltradas = partidaRepository.findAllByTimeCasaIdOrTimeVisitanteIdOrEstadioId(
+                    timeId != null ? timeId : 0,
+                    estadioId != null ? estadioId : 0,
+                    pageable);
         }
         if (partidasFiltradas.isEmpty()){
             return Page.empty();
@@ -131,6 +130,8 @@ public class PartidaService {
         partida.setTimeVisitante(partidaDTO.getTimeVisitante());
         partida.setEstadio(partidaDTO.getEstadio());
         partida.setDataHoraPartida(partidaDTO.getDataHoraPartida());
+        partida.setGolsTimeCasa(partidaDTO.getGolsTimeCasa());
+        partida.setGolsTimeVisitante(partidaDTO.getGolsTimeVisitante());
         partida.setResultado(calcularResultado(partidaDTO.getGolsTimeCasa(), partidaDTO.getGolsTimeVisitante()));
 
         return partida;

@@ -14,15 +14,18 @@ public interface TimeRepository extends JpaRepository<Time, Long> {
     @Query(nativeQuery = true, value = "SELECT * FROM ApiFutebol.time WHERE nome = :nome AND sigla_estado = :siglaEstado")
     Time findTimeDuplicado(@Param("nome") String nome, @Param("siglaEstado") String siglaEstado);
 
-    @Query (nativeQuery = true, value = "SELECT MIN(data_partida) from ApiFutebol.partida where time_casa_id = :id OR time_visitante_id = :id")
-    LocalDateTime findPrimeiraPartida(@Param("id") Long id);
+    @Query (nativeQuery = true, value = "SELECT MIN(data_hora_partida) FROM ApiFutebol.partida WHERE time_casa_id = :id OR time_visitante_id = :id")
+    LocalDateTime findPrimeiraPartidaById(@Param("id") Long id);
 
     @Query(nativeQuery = true, value ="SELECT * FROM ApiFutebol.time WHERE id = :id AND status = 1")
     Time isTimeAtivo(@Param("id") Long time);
 
-    Page<Time> findAllByNomeContainingAndSiglaEstadoContainingAndStatus(String nome, String siglaEstado, Boolean status, Pageable pageable);
+    @Query (nativeQuery = true, value= "SELECT * FROM ApiFutebol.time WHERE nome = :nome OR sigla_estado = :siglaEstado OR status = :status")
+    Page<Time> findAllByNomeOrSiglaEstadoORStatus(@Param("nome") String nome, @Param("siglaEstado") String siglaEstado, @Param("status") Boolean status, Pageable pageable);
 
     @Query(nativeQuery = true, value = "SELECT data_criacao FROM ApiFutebol.time WHERE id = :id")
     LocalDateTime findDataCriacaoTime(@Param("id") Long id);
 
+    @Query(nativeQuery = true, value = "SELECT * FROM ApiFutebol.time WHERE id = :id")
+    Time findTimeById(@Param("id")Long id);
 }

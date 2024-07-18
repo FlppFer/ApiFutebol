@@ -1,6 +1,4 @@
 package meli.com.apifut.DTO;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TimeDTO {
@@ -61,6 +59,3 @@ public class TimeDTO {
         this.id = id;
     }
 }
-
-
-

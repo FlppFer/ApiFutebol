@@ -15,26 +15,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    @ExceptionHandler(DataConflitoException.class)
-    public ResponseEntity<String> dataConflitoHandler(DataConflitoException exception) {
+    @ExceptionHandler(ConflitoDeDadosException.class)
+    public ResponseEntity<String> dataConflitoHandler(ConflitoDeDadosException exception) {
         return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
 
     }
 
-    @ExceptionHandler(NomeTimeInvalidoException.class)
-    public ResponseEntity<String> nomeTimeInvalidoHandler(NomeTimeInvalidoException exception) {
+    @ExceptionHandler(DadosInvalidosException.class)
+    public ResponseEntity<String> dadoInvalidoHandler(DadosInvalidosException exception) {
         return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
 
     }
 
-    @ExceptionHandler(SiglaInvalidaException.class)
-    public ResponseEntity<String> siglaInvalidaHandler(SiglaInvalidaException exception) {
-        return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
-
-    }
-
-    @ExceptionHandler(TimeDuplicadoException.class)
-    public ResponseEntity<String> timeDuplicadoHandler(TimeDuplicadoException exception) {
+    @ExceptionHandler(EntidadeDuplicadaException.class)
+    public ResponseEntity<String> timeDuplicadoHandler(EntidadeDuplicadaException exception) {
         return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
     }
 
@@ -44,16 +38,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler(TimeInativoException.class)
     public ResponseEntity<String> timeInativoHandler(TimeInativoException exception) {
-        return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
-    }
-
-    @ExceptionHandler(EstadioNaoEncontradoException.class)
-    public ResponseEntity<String> estadioNaoEncontradoHandler(EstadioNaoEncontradoException exception) {
-        return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
-    }
-
-    @ExceptionHandler(GolsInvalidosException.class)
-    public ResponseEntity<String> golsInvalidosHandler(GolsInvalidosException exception) {
         return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
     }
 

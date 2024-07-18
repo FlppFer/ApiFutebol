@@ -1,7 +1,6 @@
 package meli.com.apifut.Controller;
 
 import meli.com.apifut.DTO.EstadioDTO;
-import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Service.EstadioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,49 +18,33 @@ public class EstadioController {
     private EstadioService estadioService;
 
 
-    @PostMapping("/criar")
+    @PostMapping("/criarEstadio")
     public ResponseEntity<?> criarEstadio(@RequestBody EstadioDTO estadioDTO) {
-        try {
             estadioService.criarEstadio(estadioDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("O Estadio '" + estadioDTO.getNome() + "' foi criado com sucesso");
-        } catch (Exception e) {
-            String mensagemErro = "O Estadio não foi criado, verifique se todos os campos foram preenchidos e de forma correta";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagemErro);
-        }
     }
 
-    @PutMapping("/editarEstadio/{id}")
-    public ResponseEntity<?> editarEstadio(@PathVariable Long id, @RequestBody EstadioDTO estadioDTO) {
-        try {
+    @PutMapping("/editarEstadio/")
+    public ResponseEntity<?> editarEstadio(@RequestParam Long id, @RequestBody EstadioDTO estadioDTO) {
             estadioService.editarEstadio(id,estadioDTO);
-            return ResponseEntity.status(HttpStatus.OK).body("O Estadio '" + estadioDTO.getNome() + "' foi editado com sucesso");
-        } catch (Exception e){
-            String mensagemErro = "O Estadio não foi editado, verifique se todos os campos foram preenchidos e de forma correta";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagemErro);
-
-        }
+            return ResponseEntity.status(HttpStatus.OK).body("O Estadio foi editado com sucesso");
     }
 
-    @GetMapping("/buscarEstadio/{id}")
-    public ResponseEntity<?> buscarEstadioPorId(@PathVariable Long id) {
-        try{
-           Estadio estadio = estadioService.buscarEstadioPorID(id);
-            return ResponseEntity.ok(estadio);
-        } catch (Exception e){
-            String mensagemErro = "O Estadio não foi encontrado";
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagemErro);
-        }
+    @GetMapping("/buscarEstadioPorId")
+    public ResponseEntity<?> buscarEstadioPorId(@RequestParam Long id) {
+            EstadioDTO estadioDTO = estadioService.buscarEstadioPorID(id);
+            return ResponseEntity.ok(estadioDTO);
     }
 
-    @GetMapping("/listar")
-    public ResponseEntity<Page<Estadio>> listarEstadios(
+    @GetMapping("/listarEstadios")
+    public ResponseEntity<Page<EstadioDTO>> listarEstadios(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nome") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        Page<Estadio> estadios = estadioService.listarEstadios(PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
-        return ResponseEntity.ok(estadios);
+        Page<EstadioDTO> listarEstadios = estadioService.listarEstadios(PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
+        return ResponseEntity.ok(listarEstadios);
     }
 
 }
