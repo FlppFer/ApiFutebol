@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 public class EstadioService {
 
@@ -65,14 +63,14 @@ public class EstadioService {
     }
 
 
-    private Estadio converterEntidade(EstadioDTO estadioDTO) {
+    public Estadio converterEntidade(EstadioDTO estadioDTO) {
         Estadio estadio = new Estadio();
         estadio.setNome(estadioDTO.getNome());
 
         return estadio;
     }
 
-    private EstadioDTO converterDTO(Estadio estadio) {
+    public EstadioDTO converterDTO(Estadio estadio) {
         EstadioDTO estadioDTO = new EstadioDTO();
 
         estadioDTO.setId(estadio.getId());

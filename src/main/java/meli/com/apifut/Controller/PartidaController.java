@@ -1,11 +1,12 @@
 package meli.com.apifut.Controller;
 
-import meli.com.apifut.DTO.PartidaDTO;
+import meli.com.apifut.DTO.*;
 import meli.com.apifut.Service.PartidaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,4 +55,10 @@ public class PartidaController {
                 PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortBy));
         return ResponseEntity.ok(partidas);
         }
+
+    @GetMapping("/historicoGeral")
+    public ResponseEntity<?> getHistoricoGeral(@Param("id") Long timeId) {
+        HistoricoGeralDTO historicoGeralDTO = partidaService.gerarHistoricoGeral(timeId);
+        return ResponseEntity.ok(historicoGeralDTO);
+    }
     }

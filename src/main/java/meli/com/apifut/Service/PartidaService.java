@@ -1,8 +1,10 @@
 package meli.com.apifut.Service;
 
+import meli.com.apifut.DTO.HistoricoGeralDTO;
 import meli.com.apifut.Exceptions.*;
 import meli.com.apifut.Exceptions.CamposObrigatoriosException;
 import meli.com.apifut.Exceptions.EntidadeDuplicadaException;
+import meli.com.apifut.Model.HistoricoGeral;
 import meli.com.apifut.Model.Partida;
 import meli.com.apifut.DTO.PartidaDTO;
 import meli.com.apifut.Repository.EstadioRepository;
@@ -157,5 +159,27 @@ public class PartidaService {
         } else {
             return "Empate";
         }
+    }
+
+    // metodos para gerar historicos
+
+    public HistoricoGeralDTO gerarHistoricoGeral(Long timeId) {
+        HistoricoGeralDTO historicoGeralDTO = new HistoricoGeralDTO();
+        historicoGeralDTO.setVitorias(partidaRepository.countVitorias(timeId));
+        historicoGeralDTO.setEmpates(partidaRepository.countEmpates(timeId));
+        historicoGeralDTO.setDerrotas(partidaRepository.countDerrotas(timeId));
+        historicoGeralDTO.setGolsFeitos(partidaRepository.countGolsFeitos(timeId));
+        historicoGeralDTO.setGolsSofridos(partidaRepository.countGolsSofridos(timeId));
+
+        return historicoGeralDTO;
+    }
+    public HistoricoGeral converterHistoricoGeral(HistoricoGeralDTO historicoGeralDTO) {
+        HistoricoGeral historicoGeral = new HistoricoGeral();
+        historicoGeral.setVitorias(historicoGeralDTO.getVitorias());
+        historicoGeral.setEmpates(historicoGeralDTO.getEmpates());
+        historicoGeral.setDerrotas(historicoGeralDTO.getDerrotas());
+        historicoGeral.setGolsFeitos(historicoGeralDTO.getGolsFeitos());
+        historicoGeral.setGolsSofridos(historicoGeralDTO.getGolsSofridos());
+        return historicoGeral;
     }
 }

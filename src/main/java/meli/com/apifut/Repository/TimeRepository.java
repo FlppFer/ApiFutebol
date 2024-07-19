@@ -11,6 +11,10 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface TimeRepository extends JpaRepository<Time, Long> {
+
+    @Query(nativeQuery = true, value = "SELECT * FROM ApiFutebol.time WHERE id = :id")
+    Time findTimeById(@Param("id")Long id);
+
     @Query(nativeQuery = true, value = "SELECT * FROM ApiFutebol.time WHERE nome = :nome AND sigla_estado = :siglaEstado")
     Time findTimeDuplicado(@Param("nome") String nome, @Param("siglaEstado") String siglaEstado);
 
@@ -26,6 +30,4 @@ public interface TimeRepository extends JpaRepository<Time, Long> {
     @Query(nativeQuery = true, value = "SELECT data_criacao FROM ApiFutebol.time WHERE id = :id")
     LocalDateTime findDataCriacaoTime(@Param("id") Long id);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM ApiFutebol.time WHERE id = :id")
-    Time findTimeById(@Param("id")Long id);
 }

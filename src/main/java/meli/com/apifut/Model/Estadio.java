@@ -1,6 +1,7 @@
 package meli.com.apifut.Model;
 
 import jakarta.persistence.*;
+import meli.com.apifut.DTO.EstadioDTO;
 
 @Entity
 @Table(name = "estadio")
@@ -13,6 +14,15 @@ public class Estadio {
 
     public Estadio() {
 
+    }
+
+    public Estadio(EstadioDTO estadioDTO) {
+        this.nome = estadioDTO.getNome();
+    }
+
+    public Estadio(String nome, Long id) {
+        this.nome = nome;
+        this.id = id;
     }
 
     public void setId(Long id) {
