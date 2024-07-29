@@ -1,9 +1,6 @@
 package meli.com.apifut.Repository;
 
-import jakarta.persistence.EntityManager;
 import meli.com.apifut.DTO.EstadioDTO;
-import meli.com.apifut.Exceptions.CamposObrigatoriosException;
-import meli.com.apifut.Exceptions.EntidadeDuplicadaException;
 import meli.com.apifut.Model.Estadio;
 import meli.com.apifut.Service.EstadioService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @DataJpaTest

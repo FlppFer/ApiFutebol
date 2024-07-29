@@ -78,7 +78,7 @@ public class TimeService {
             throw new EntidadeNaoEncontradaException("Não existe um time com o ID informado",HttpStatus.NOT_FOUND);
         }else if (timeRepository.findTimeDuplicado(timeDTO.getNome(), timeDTO.getSiglaEstado()) != null) {
             throw new EntidadeDuplicadaException("Já existe um time com mesmo nome cadastrado neste estado",HttpStatus.CONFLICT);
-        }else if (timeDTO.getDataCriacao().isAfter(timeRepository.findPrimeiraPartidaById(id)) || timeRepository.findPrimeiraPartidaById(id) == null){
+        }else if (timeRepository.findPrimeiraPartidaById(id) != null || timeDTO.getDataCriacao().isAfter(timeRepository.findPrimeiraPartidaById(id))){
             throw new ConflitoDeDadosException("A data de criação do time não pode ser após uma partida registrada em que ele ja participou",HttpStatus.CONFLICT);
         } else if (timeDTO.getDataCriacao().isAfter(LocalDateTime.now())){
             throw new DadosInvalidosException("A data de criação do time não pode ser no futuro",HttpStatus.BAD_REQUEST);
